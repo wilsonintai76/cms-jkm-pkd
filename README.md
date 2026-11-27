@@ -137,6 +137,24 @@ Rekod disimpan dalam jadual `cqi_reports` (satu rekod per kod kursus) dan boleh
 dibuka semula dari senarai **Rekod CQI Tersimpan**. Endpoint:
 `GET/POST /api/cqi`, `GET/DELETE /api/cqi/{kod}`, `POST /api/cqi/extract`.
 
+## Maklumat Kursus (menu 2)
+
+Menu **2. Maklumat Kursus (13 Item)** ialah tempat tunggal untuk identiti kursus, dan
+nilainya mengalir ke Course Outline, JSU dan Laporan CQI:
+
+| Bahagian | Medan |
+| --- | --- |
+| Identiti Dokumen | institusi, jabatan, kod dokumen (PLSP-04 …) |
+| Item 1–5 | nama, kod, semester/tahun ditawarkan, kredit, pra-syarat, pemberat CA/FE, sinopsis |
+| Item 6–7 | CLO (kod, pernyataan, taksonomi, PLO) |
+| Item 9 & 11 | keperluan khas, maklumat tambahan |
+| Item 10 | rujukan utama dan tambahan (satu baris satu rujukan) |
+| Item 13 | kaedah penilaian (nama, bilangan, peratus) |
+| Pengesahan | penyelaras kursus, tarikh sedia, pengesah, tarikh sah |
+
+Jabatan dan nama penyelaras inilah yang mengisi **Maklumat Kepala Laporan** CQI, jadi
+kedua-duanya tidak perlu ditaip semula dalam modul CQI.
+
 ## Semak SLT (Course Outline → tab 3)
 
 Tab **3. Semak SLT** memaparkan semula jadual SLT rasmi daripada data kursus supaya
