@@ -13,8 +13,10 @@ type CqiImportPanelProps = {
   busy: boolean;
   apiOnline: boolean;
   savedList: { course_code: string; session?: string; updated_at?: string }[];
+  courseLoaded: boolean;
   onChange: (next: CqiBundle) => void;
   onUpload: (files: File[]) => void;
+  onFillFromCourse: () => void;
   onSelectProgramme: (prog: string) => void;
   onOpenBorang: (prog: string) => void;
   onOpenSaved: (code: string) => void;
@@ -31,6 +33,8 @@ export default function CqiImportPanel({
   savedList,
   onChange,
   onUpload,
+  courseLoaded,
+  onFillFromCourse,
   onSelectProgramme,
   onOpenBorang,
   onOpenSaved,
@@ -150,7 +154,22 @@ export default function CqiImportPanel({
         </div>
 
         <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-2.5">
-          <h2 className="text-base font-bold">Maklumat Kepala Laporan</h2>
+          <div className="flex items-start justify-between gap-2">
+            <h2 className="text-base font-bold">Maklumat Kepala Laporan</h2>
+            <button
+              onClick={onFillFromCourse}
+              disabled={!courseLoaded}
+              title="Ambil kod, nama, jabatan, penyelaras dan CLO4 daripada kursus CO/JSU yang dibuka"
+              className="px-2 py-1 rounded-lg border border-slate-300 text-[11px] font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-1 disabled:opacity-40 shrink-0"
+            >
+              <RefreshCw className="w-3 h-3" /> Dari Kursus
+            </button>
+          </div>
+          <p className="text-[11px] text-slate-500 -mt-1">
+            {courseLoaded
+              ? "Diisi automatik daripada kursus CO/JSU yang dibuka — boleh ubah."
+              : "Buka rekod kursus di menu 1 untuk mengisi bahagian ini secara automatik."}
+          </p>
           <label className="block">
             <span className="text-[11px] font-semibold text-slate-600">Kod Kursus</span>
             <input className={FIELD} value={meta.code} onChange={(e) => patchMeta({ code: e.target.value })} />

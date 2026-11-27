@@ -14,10 +14,12 @@ type CqiModuleProps = {
   busy: boolean;
   logoUri: string | null;
   savedList: { course_code: string; session?: string; updated_at?: string }[];
+  courseLoaded: boolean;
   onSubViewChange: (v: string) => void;
   onProgrammeChange: (p: string) => void;
   onChange: (next: CqiBundle) => void;
   onUpload: (files: File[]) => void;
+  onFillFromCourse: () => void;
   onSave: () => void;
   onPrint: () => void;
   onNotify: (msg: string, type?: string) => void;
@@ -39,10 +41,12 @@ export default function CqiModule({
   busy,
   logoUri,
   savedList,
+  courseLoaded,
   onSubViewChange,
   onProgrammeChange,
   onChange,
   onUpload,
+  onFillFromCourse,
   onSave,
   onPrint,
   onNotify,
@@ -218,8 +222,10 @@ export default function CqiModule({
           busy={busy}
           apiOnline={apiOnline}
           savedList={savedList}
+          courseLoaded={courseLoaded}
           onChange={onChange}
           onUpload={onUpload}
+          onFillFromCourse={onFillFromCourse}
           onSelectProgramme={(p) => {
             onProgrammeChange(p);
             onSubViewChange("corr");

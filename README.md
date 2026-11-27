@@ -113,6 +113,12 @@ Aliran kerja: **1** muat naik → **2** semak Template CORR setiap program
 (termasuk semakan silang angka CORR vs PBCLOGSA) → **3** isi Borang CQI
 (2 muka surat, pilihan muka surat 3 = lampiran markah) → **Cetak / PDF**.
 
+**Maklumat Kepala Laporan** (kod kursus, nama kursus, jabatan, nama penyelaras dan
+tanda CLO4) diisi automatik daripada kursus Course Outline/JSU yang sedang dibuka,
+jadi laporan CQI menyambung data kursus yang sama. Nilai yang sudah diisi tidak
+ditimpa semasa anda menyunting kursus; butang **Dari Kursus** mengisi semula semua
+medan itu bila perlu. Nama pemegang tempat seperti "PENSYARAH" diabaikan.
+
 Butiran borang:
 - Bahagian A: lajur sesi terdahulu boleh ditaip, lajur sesi semasa dikira
   automatik, lajur analisis (naik/turun) dikira daripada kedua-duanya.

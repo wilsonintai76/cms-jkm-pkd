@@ -13,7 +13,7 @@ import CourseOutlineModule from "./components/CourseOutlineModule";
 import JsuModule from "./components/JsuModule";
 import CqiModule from "./components/CqiModule";
 import SettingsPanel from "./components/SettingsPanel";
-import { bundleFromExtract, createEmptyCqi } from "./lib/cqi";
+import { bundleFromExtract, createEmptyCqi, metaFromCourse } from "./lib/cqi";
 import type { CqiBundle } from "./lib/cqi";
 
 const INITIAL_DRAFT = {
@@ -271,6 +271,24 @@ export default function App() {
     }
   };
 
+  // Kepala laporan CQI diisi daripada kursus CO/JSU yang sedang dibuka.
+  useEffect(() => {
+    if (!course.course_code && !course.course_name) return;
+    setCqi((prev) => {
+      const meta = metaFromCourse(course, prev.meta);
+      return meta === prev.meta ? prev : { ...prev, meta };
+    });
+  }, [course]);
+
+  const fillCqiFromCourse = () => {
+    if (!course.course_code && !course.course_name) {
+      notify("Tiada kursus CO/JSU dimuatkan. Buka rekod kursus di menu 1 dahulu.", "warning");
+      return;
+    }
+    setCqi((prev) => ({ ...prev, meta: metaFromCourse(course, prev.meta, true) }));
+    notify("Kepala laporan CQI diisi daripada kursus CO/JSU.", "success");
+  };
+
   const deleteSavedCqi = async (code: string) => {
     await fetch(`${API_BASE}/cqi/${encodeURIComponent(code)}`, { method: "DELETE" });
     setCqiList((prev) => prev.filter((x) => x.course_code !== code));
@@ -497,10 +515,12 @@ export default function App() {
               busy={busy}
               logoUri={logoUri}
               savedList={cqiList}
+              courseLoaded={Boolean(course.course_code || course.course_name)}
               onSubViewChange={setCqiSubView}
               onProgrammeChange={setCqiProg}
               onChange={setCqi}
               onUpload={handleCqiUpload}
+              onFillFromCourse={fillCqiFromCourse}
               onSave={() => saveCqi(cqi)}
               onPrint={() => triggerPrint("cqi")}
               onNotify={notify}

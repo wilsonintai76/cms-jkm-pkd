@@ -182,8 +182,49 @@ export function createEmptyCqi(): CqiBundle {
   };
 }
 
-export function programmesOf(students: CqiStudent[]): string[] {
-  return Array.from(new Set(students.map((s) => s.prog).filter(Boolean))).sort();
+/** Nilai pemegang tempat dalam rekod kursus yang tidak patut disalin ke laporan. */
+const META_PLACEHOLDER = /^(pensyarah|penyelia|nama|tiada|tbc|tba|none|-+)$/i;
+
+/**
+ * Isi kepala laporan CQI (kod, nama, jabatan, penyelaras, CLO4) daripada rekod
+ * kursus CO/JSU. Tanpa `force` hanya medan kosong diisi supaya suntingan
+ * pengguna tidak ditimpa.
+ */
+export function metaFromCourse(
+  course: Record<string, any> | null | undefined,
+  meta: CqiMeta,
+  force = false,
+): CqiMeta {
+  if (!course) return meta;
+  const clean = (value: unknown) => {
+    const text = String(value ?? "").trim();
+    return META_PLACEHOLDER.test(text) ? "" : text;
+  };
+  const pick = (current: string, incoming: unknown) => {
+    const value = clean(incoming);
+    if (!value) return current;
+    return force || !current.trim() ? value : current;
+  };
+
+  const next: CqiMeta = {
+    ...meta,
+    code: pick(meta.code, course.course_code),
+    name: pick(meta.name, course.course_name),
+    jabatan: pick(meta.jabatan, course.department),
+    coordinator: pick(meta.coordinator, course.prepared_by),
+    hasClo4: meta.hasClo4 || (course.clos?.length || 0) >= 4,
+  };
+
+  const unchanged =
+    next.code === meta.code &&
+    next.name === meta.name &&
+    next.jabatan === meta.jabatan &&
+    next.coordinator === meta.coordinator &&
+    next.hasClo4 === meta.hasClo4;
+  return unchanged ? meta : next;
+}
+
+export function programmesOf(students: CqiStudent[]): string[] {  return Array.from(new Set(students.map((s) => s.prog).filter(Boolean))).sort();
 }
 
 export function studentsOf(students: CqiStudent[], prog: string): CqiStudent[] {
