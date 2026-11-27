@@ -405,3 +405,20 @@ export function bundleFromExtract(data: any): CqiBundle {
 export function cloLabels(hasClo4: boolean): string[] {
   return hasClo4 ? ["CLO1", "CLO2", "CLO3", "CLO4"] : ["CLO1", "CLO2", "CLO3"];
 }
+
+/**
+ * Pernyataan CLO daripada Maklumat Kursus, diselaraskan dengan lajur CLO laporan:
+ * padan ikut kod CLO dahulu, jika tiada ikut urutan.
+ */
+export function cloStatements(
+  clos: { code?: string; statement?: string }[] | null | undefined,
+  hasClo4: boolean,
+): string[] {
+  const list = clos || [];
+  return cloLabels(hasClo4).map((label, i) => {
+    const byCode = list.find(
+      (c) => String(c.code ?? "").trim().toUpperCase() === label.toUpperCase(),
+    );
+    return String((byCode || list[i])?.statement ?? "").trim();
+  });
+}

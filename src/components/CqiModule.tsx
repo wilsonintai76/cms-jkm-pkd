@@ -8,6 +8,7 @@ import type { CqiBundle } from "../lib/cqi";
 
 type CqiModuleProps = {
   bundle: CqiBundle;
+  clos?: { code?: string; statement?: string }[];
   subView: string;
   activeProgramme: string;
   apiOnline: boolean;
@@ -34,6 +35,7 @@ const TABS = [
 
 export default function CqiModule({
   bundle,
+  clos,
   subView,
   activeProgramme,
   apiOnline,
@@ -236,7 +238,7 @@ export default function CqiModule({
         />
       )}
 
-      {subView === "corr" && hasData && <CqiCorrTemplate bundle={bundle} prog={prog} />}
+      {subView === "corr" && hasData && <CqiCorrTemplate bundle={bundle} prog={prog} clos={clos} />}
 
       {subView === "borang" && hasData && (
         <>
@@ -250,6 +252,7 @@ export default function CqiModule({
           <CqiBorangSheet
             bundle={bundle}
             prog={prog}
+            clos={clos}
             logoUri={logoUri}
             includeLampiran={includeLampiran}
             onChange={onChange}

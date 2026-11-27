@@ -246,6 +246,8 @@ export default function App() {
       const next = bundleFromExtract(parsed);
       next.meta = metaFromCourse(course, next.meta);
       next.meta = withSession(next.meta, currentSession);
+      // Jabatan berwibawa datang daripada Tetapan (dokumen CORR mungkin guna ejaan lain).
+      if (department.trim()) next.meta = { ...next.meta, jabatan: department.trim() };
       setCqi(next);
       setCqiProg(next.programmes[0] || "");
       notify(
@@ -556,6 +558,7 @@ export default function App() {
           {activeNav === "cqi_module" && (
             <CqiModule
               bundle={cqi}
+              clos={course.clos}
               subView={cqiSubView}
               activeProgramme={cqiProg}
               apiOnline={apiOnline}

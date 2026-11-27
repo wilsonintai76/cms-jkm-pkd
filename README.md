@@ -121,6 +121,11 @@ yang sama. Nama pemegang tempat seperti "PENSYARAH" diabaikan. Pilihan **Cetak l
 CLO4** dinyalakan automatik apabila kursus mempunyai 4 CLO atau laporan PBCLOGSA
 mengandungi markah CLO4.
 
+**Pernyataan CLO** diambil daripada *Item 6* Maklumat Kursus dan dicetak di bawah
+setiap baris CLO, pada **Template CORR** (jadual petunjuk prestasi + kad KPI) dan
+pada **Borang CQI** (jadual Pencapaian sesi terdahulu dan sesi semasa), supaya
+laporan CQI merujuk CLO kursus yang sama.
+
 **Sesi akademik** (sesi semasa, terdahulu dan hadapan) ditetapkan sekali di menu
 **5. Tetapan & Logo** → *Sesi Akademik Semasa* (format `II : 2025/2026`). Laporan CQI
 menggunakannya secara automatik; sesi yang dibaca daripada dokumen CORR/PBCLOGSA

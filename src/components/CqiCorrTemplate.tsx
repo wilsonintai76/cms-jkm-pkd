@@ -1,20 +1,22 @@
 import React from "react";
 import { AlertTriangle } from "lucide-react";
-import { computeProgStats, GRADE_ORDER, passAllClo, studentsOf, tumpangOf } from "../lib/cqi";
+import { cloStatements, computeProgStats, GRADE_ORDER, passAllClo, studentsOf, tumpangOf } from "../lib/cqi";
 import type { CqiBundle } from "../lib/cqi";
 
 type CqiCorrTemplateProps = {
   bundle: CqiBundle;
   prog: string;
+  clos?: { code?: string; statement?: string }[];
 };
 
-export default function CqiCorrTemplate({ bundle, prog }: CqiCorrTemplateProps) {
+export default function CqiCorrTemplate({ bundle, prog, clos }: CqiCorrTemplateProps) {
   const hasClo4 = bundle.meta.hasClo4;
   const students = studentsOf(bundle.students, prog);
   const stats = computeProgStats(bundle.students, prog, hasClo4);
   const tumpang = tumpangOf(bundle.students, prog);
   const corr = bundle.corr;
   const cloIdx = hasClo4 ? [0, 1, 2, 3] : [0, 1, 2];
+  const cloText = cloStatements(clos, hasClo4);
 
   if (!students.length) {
     return (
@@ -24,19 +26,19 @@ export default function CqiCorrTemplate({ bundle, prog }: CqiCorrTemplateProps) 
     );
   }
 
-  const indicatorRows: [string, string, string][] = [
+  const indicatorRows: [string, string, string, string?][] = [
     ["a)", "BIL. PELAJAR KESELURUHAN", String(stats.n)],
     ["b)", "BIL. PELAJAR LULUS SEMUA CLO", String(stats.passAll)],
     ["c)", "PERATUS LULUS SEMUA CLO (%)", `${stats.passAllPct.toFixed(1)}%`],
-    ["d)", "% pelajar lulus CLO1 >50%", `${stats.passCloPct[0].toFixed(1)}%`],
+    ["d)", "% pelajar lulus CLO1 >50%", `${stats.passCloPct[0].toFixed(1)}%`, cloText[0]],
     ["", "% purata CLO1", `${stats.avgClo[0].toFixed(1)}%`],
-    ["e)", "% pelajar lulus CLO2 >50%", `${stats.passCloPct[1].toFixed(1)}%`],
+    ["e)", "% pelajar lulus CLO2 >50%", `${stats.passCloPct[1].toFixed(1)}%`, cloText[1]],
     ["", "% purata CLO2", `${stats.avgClo[1].toFixed(1)}%`],
-    ["f)", "% pelajar lulus CLO3 >50%", `${stats.passCloPct[2].toFixed(1)}%`],
+    ["f)", "% pelajar lulus CLO3 >50%", `${stats.passCloPct[2].toFixed(1)}%`, cloText[2]],
     ["", "% purata CLO3", `${stats.avgClo[2].toFixed(1)}%`],
   ];
   if (hasClo4) {
-    indicatorRows.push(["g)", "% pelajar lulus CLO4 >50%", `${stats.passCloPct[3].toFixed(1)}%`]);
+    indicatorRows.push(["g)", "% pelajar lulus CLO4 >50%", `${stats.passCloPct[3].toFixed(1)}%`, cloText[3]]);
     indicatorRows.push(["", "% purata CLO4", `${stats.avgClo[3].toFixed(1)}%`]);
   }
   indicatorRows.push([
@@ -46,10 +48,10 @@ export default function CqiCorrTemplate({ bundle, prog }: CqiCorrTemplateProps) 
   ]);
 
   const kpiItems = [
-    { label: "CLO1 (% Lulus >50%)", pct: stats.passCloPct[0], target: 80 },
-    { label: "CLO2 (% Lulus >50%)", pct: stats.passCloPct[1], target: 80 },
-    { label: "CLO3 (% Lulus >50%)", pct: stats.passCloPct[2], target: 80 },
-    { label: "CA-FE <30%", pct: stats.caFeCapaiPct, target: 25 },
+    { label: "CLO1 (% Lulus >50%)", pct: stats.passCloPct[0], target: 80, note: cloText[0] },
+    { label: "CLO2 (% Lulus >50%)", pct: stats.passCloPct[1], target: 80, note: cloText[1] },
+    { label: "CLO3 (% Lulus >50%)", pct: stats.passCloPct[2], target: 80, note: cloText[2] },
+    { label: "CA-FE <30%", pct: stats.caFeCapaiPct, target: 25, note: "" },
   ];
 
   return (
@@ -227,10 +229,17 @@ export default function CqiCorrTemplate({ bundle, prog }: CqiCorrTemplateProps) 
               </tr>
             </thead>
             <tbody>
-              {indicatorRows.map(([code, label, value], i) => (
+              {indicatorRows.map(([code, label, value, note], i) => (
                 <tr key={i} className={code ? "border-t border-slate-100 font-semibold" : "bg-slate-50/60 text-slate-600"}>
                   <td className="px-2 py-1.5 text-center text-slate-500">{code}</td>
-                  <td className="px-2 py-1.5">{label}</td>
+                  <td className="px-2 py-1.5">
+                    {label}
+                    {note && (
+                      <div className="text-[9.5px] italic font-normal text-slate-500 leading-tight">
+                        {note}
+                      </div>
+                    )}
+                  </td>
                   <td className="px-2 py-1.5 text-center font-bold text-slate-900">{value}</td>
                 </tr>
               ))}
@@ -245,7 +254,14 @@ export default function CqiCorrTemplate({ bundle, prog }: CqiCorrTemplateProps) 
             return (
               <div key={item.label}>
                 <div className="flex justify-between text-[11px] mb-1">
-                  <span className="font-semibold text-slate-700">{item.label}</span>
+                  <span className="font-semibold text-slate-700">
+                    {item.label}
+                    {item.note && (
+                      <span className="block font-normal italic text-[9.5px] text-slate-500 leading-tight">
+                        {item.note}
+                      </span>
+                    )}
+                  </span>
                   <span className={`font-extrabold ${met ? "text-emerald-700" : "text-rose-600"}`}>
                     {item.pct.toFixed(1)}% ({met ? "CAPAI" : "TIDAK CAPAI"})
                   </span>

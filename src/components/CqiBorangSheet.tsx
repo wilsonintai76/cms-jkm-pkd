@@ -6,11 +6,13 @@ import {
   trendOf,
   tumpangOf,
 } from "../lib/cqi";
+import { cloStatements } from "../lib/cqi";
 import type { CqiBundle, ProgCqi } from "../lib/cqi";
 
 type CqiBorangSheetProps = {
   bundle: CqiBundle;
   prog: string;
+  clos?: { code?: string; statement?: string }[];
   logoUri: string | null;
   includeLampiran: boolean;
   onChange: (next: CqiBundle) => void;
@@ -70,7 +72,7 @@ function NumInput({
 
 type NumRowProps = {
   code?: string;
-  label: string;
+  label: React.ReactNode;
   value: React.ReactNode;
   strong?: boolean;
   indent?: boolean;
@@ -90,7 +92,14 @@ function NumRow({ code, label, value, strong, indent, wrap }: NumRowProps) {
   );
 }
 
-export default function CqiBorangSheet({ bundle, prog, logoUri, includeLampiran, onChange }: CqiBorangSheetProps) {
+export default function CqiBorangSheet({
+  bundle,
+  prog,
+  clos,
+  logoUri,
+  includeLampiran,
+  onChange,
+}: CqiBorangSheetProps) {
   const meta = bundle.meta;
   const hasClo4 = meta.hasClo4;
   const cqi: ProgCqi = bundle.cqiByProg[prog] ?? defaultProgCqi(meta.currSession);
@@ -98,6 +107,17 @@ export default function CqiBorangSheet({ bundle, prog, logoUri, includeLampiran,
   const students = studentsOf(bundle.students, prog);
   const tumpang = tumpangOf(bundle.students, prog);
   const cloIdx = hasClo4 ? [0, 1, 2, 3] : [0, 1, 2];
+  const cloText = cloStatements(clos, hasClo4);
+  // Pernyataan CLO daripada Maklumat Kursus dipaparkan di bawah label baris CLO.
+  const cloPrompt = (i: number, text: string) =>
+    cloText[i] ? (
+      <>
+        {text}
+        <div className="text-[7.5pt] italic font-normal leading-tight">{cloText[i]}</div>
+      </>
+    ) : (
+      text
+    );
 
   const patch = (p: Partial<ProgCqi>) =>
     onChange({ ...bundle, cqiByProg: { ...bundle.cqiByProg, [prog]: { ...cqi, ...p } } });
@@ -264,7 +284,7 @@ export default function CqiBorangSheet({ bundle, prog, logoUri, includeLampiran,
                     </tr>
                     <NumRow
                       code="d)"
-                      label="% pelajar lulus CLO1 >50%"
+                      label={cloPrompt(0, "% pelajar lulus CLO1 >50%")}
                       value={
                         <span>
                           <NumInput
@@ -300,7 +320,7 @@ export default function CqiBorangSheet({ bundle, prog, logoUri, includeLampiran,
                     />
                     <NumRow
                       code="e)"
-                      label="% pelajar lulus CLO2 >50%"
+                      label={cloPrompt(1, "% pelajar lulus CLO2 >50%")}
                       value={
                         <span>
                           <NumInput
@@ -336,7 +356,7 @@ export default function CqiBorangSheet({ bundle, prog, logoUri, includeLampiran,
                     />
                     <NumRow
                       code="f)"
-                      label="% pelajar lulus CLO3 >50%"
+                      label={cloPrompt(2, "% pelajar lulus CLO3 >50%")}
                       value={
                         <span>
                           <NumInput
@@ -372,7 +392,7 @@ export default function CqiBorangSheet({ bundle, prog, logoUri, includeLampiran,
                     />
                     <NumRow
                       code="g)"
-                      label="% pelajar lulus CLO4 >50%"
+                      label={cloPrompt(3, "% pelajar lulus CLO4 >50%")}
                       value={
                         hasClo4 ? (
                           <span>
@@ -454,15 +474,15 @@ export default function CqiBorangSheet({ bundle, prog, logoUri, includeLampiran,
                     <tr>
                       <td colSpan={4} className="h-1" />
                     </tr>
-                    <NumRow code="d)" label="% pelajar lulus CLO1 >50%" value={`${stats.passCloPct[0].toFixed(1)}%`} strong />
+                    <NumRow code="d)" label={cloPrompt(0, "% pelajar lulus CLO1 >50%")} value={`${stats.passCloPct[0].toFixed(1)}%`} strong />
                     <NumRow label="% purata CLO1" indent value={`${stats.avgClo[0].toFixed(1)}%`} />
-                    <NumRow code="e)" label="% pelajar lulus CLO2 >50%" value={`${stats.passCloPct[1].toFixed(1)}%`} strong />
+                    <NumRow code="e)" label={cloPrompt(1, "% pelajar lulus CLO2 >50%")} value={`${stats.passCloPct[1].toFixed(1)}%`} strong />
                     <NumRow label="% purata CLO2" indent value={`${stats.avgClo[1].toFixed(1)}%`} />
-                    <NumRow code="f)" label="% pelajar lulus CLO3 >50%" value={`${stats.passCloPct[2].toFixed(1)}%`} strong />
+                    <NumRow code="f)" label={cloPrompt(2, "% pelajar lulus CLO3 >50%")} value={`${stats.passCloPct[2].toFixed(1)}%`} strong />
                     <NumRow label="% purata CLO3" indent value={`${stats.avgClo[2].toFixed(1)}%`} />
                     <NumRow
                       code="g)"
-                      label="% pelajar lulus CLO4 >50%"
+                      label={cloPrompt(3, "% pelajar lulus CLO4 >50%")}
                       value={hasClo4 ? `${stats.passCloPct[3].toFixed(1)}%` : "N/A"}
                       strong
                     />
