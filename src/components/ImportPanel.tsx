@@ -32,12 +32,12 @@ export default function ImportPanel({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 max-w-6xl mx-auto">
       <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
-        <h2 className="text-base font-bold">1. Import PDF Silibus JPPKK / JSON</h2>
+        <h2 className="text-base font-bold">Import Silibus (PDF / JSON)</h2>
         <p className="text-xs text-slate-600">
           Muat naik dokumen rasmi <strong>Course Information (.pdf)</strong>. Enjin Python FastAPI akan mengekstrak kesemua 13 item silibus, membina Course Outline (Lampiran 4) & JSU PB, serta menyimpannya ke SQLite.
         </p>
 
-        <label className="flex flex-col items-center justify-center h-48 border-2 border-dashed border-sky-300 rounded-2xl bg-sky-50/50 hover:bg-sky-50 cursor-pointer transition p-6 text-center">
+        <label className="flex flex-col items-center justify-center h-36 border-2 border-dashed border-sky-300 rounded-2xl bg-sky-50/50 hover:bg-sky-50 cursor-pointer transition p-6 text-center">
           <Upload className="w-9 h-9 text-sky-600 mb-2" />
           <span className="text-sm font-semibold text-slate-800">
             {busy ? "Sedang mengekstrak PDF silibus..." : "Klik untuk pilih Fail PDF Silibus (.pdf) atau JSON"}
@@ -49,7 +49,7 @@ export default function ImportPanel({
 
       <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-bold">2. Rekod Kursus Tersimpan (SQLite)</h2>
+          <h2 className="text-base font-bold">Rekod Kursus Tersimpan (SQLite)</h2>
           <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
             co_jsu_records.db
           </span>

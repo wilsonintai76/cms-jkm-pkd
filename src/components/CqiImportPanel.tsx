@@ -140,8 +140,8 @@ export default function CqiImportPanel({
           <div>
             <h2 className="text-base font-bold">Maklumat Kepala Laporan</h2>
             <p className="text-[11px] text-slate-500">
-              Diambil automatik daripada <strong>2. Maklumat Kursus</strong> dan{" "}
-              <strong>6. Tetapan</strong> — tiada medan untuk diisi di sini.
+              Diambil automatik daripada <strong>1. Maklumat Kursus</strong> dan{" "}
+              <strong>5. Tetapan</strong> — tiada medan untuk diisi di sini.
             </p>
           </div>
           <div className="divide-y divide-slate-100 rounded-lg border border-slate-200">

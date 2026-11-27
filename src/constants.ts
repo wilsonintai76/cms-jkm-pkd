@@ -1,4 +1,4 @@
-import { BookOpen, ClipboardCheck, FileText, Grid, Settings, Upload } from "lucide-react";
+import { BookOpen, ClipboardCheck, FileText, Grid, Settings } from "lucide-react";
 
 export const API_BASE = "http://127.0.0.1:8765/api";
 
@@ -41,12 +41,11 @@ export const F2F_FIELDS = SLT_FIELDS.filter((f) => f.key.startsWith("f2f_"));
 export const NF2F_FIELDS = SLT_FIELDS.filter((f) => f.key.startsWith("nf2f_"));
 
 export const NAV_ITEMS = [
-  { id: "import", label: "1. Import Silibus & Rekod", icon: Upload },
-  { id: "course_info", label: "2. Maklumat Kursus (13 Item)", icon: BookOpen },
-  { id: "co_module", label: "3. Course Outline (Lampiran 4)", icon: FileText },
-  { id: "jsu_module", label: "4. Jadual Spesifikasi Ujian", icon: Grid },
-  { id: "cqi_module", label: "5. Laporan CQI (PBCLOGSA & CORR)", icon: ClipboardCheck },
-  { id: "settings", label: "6. Tetapan & Logo", icon: Settings },
+  { id: "course_info", label: "1. Maklumat Kursus (13 Item)", icon: BookOpen },
+  { id: "co_module", label: "2. Course Outline (Lampiran 4)", icon: FileText },
+  { id: "jsu_module", label: "3. Jadual Spesifikasi Ujian", icon: Grid },
+  { id: "cqi_module", label: "4. Laporan CQI (PBCLOGSA & CORR)", icon: ClipboardCheck },
+  { id: "settings", label: "5. Tetapan & Logo", icon: Settings },
 ];
 
 export const DEFAULT_DOC_CODE = "PLSP-04 (4) (26-02-26)";

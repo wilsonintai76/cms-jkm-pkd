@@ -27,7 +27,7 @@ const INITIAL_DRAFT = {
 };
 
 export default function App() {
-  const [activeNav, setActiveNav] = useState("import");
+  const [activeNav, setActiveNav] = useState("course_info");
   const [coSubView, setCoSubView] = useState("edit");
   const [jsuSubView, setJsuSubView] = useState("edit");
   const [cqiSubView, setCqiSubView] = useState("import");
@@ -504,21 +504,20 @@ export default function App() {
         />
 
         <main className="flex-1 p-5 overflow-y-auto">
-          {activeNav === "import" && (
-            <ImportPanel
-              busy={busy}
-              apiOnline={apiOnline}
-              dbPath={dbPath}
-              savedList={savedList}
-              onUpload={handleFileUpload}
-              onOpen={openSavedCourse}
-              onDelete={deleteSavedCourse}
-              onRetryApi={retryApi}
-            />
-          )}
-
           {activeNav === "course_info" && (
-            <CourseInfoPanel course={course} checklist={checklist} onChange={setCourse} />
+            <div className="space-y-4">
+              <ImportPanel
+                busy={busy}
+                apiOnline={apiOnline}
+                dbPath={dbPath}
+                savedList={savedList}
+                onUpload={handleFileUpload}
+                onOpen={openSavedCourse}
+                onDelete={deleteSavedCourse}
+                onRetryApi={retryApi}
+              />
+              <CourseInfoPanel course={course} checklist={checklist} onChange={setCourse} />
+            </div>
           )}
 
           {activeNav === "co_module" && (

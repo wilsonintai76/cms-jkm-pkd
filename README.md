@@ -91,7 +91,7 @@ runtime (preinstalled on Windows 11 and updated Windows 10).
 
 ## Laporan CQI (PBCLOGSA + CORR panitia)
 
-Menu **5. Laporan CQI** menghasilkan *Borang Pelaporan Penambahbaikan Kualiti
+Menu **4. Laporan CQI** menghasilkan *Borang Pelaporan Penambahbaikan Kualiti
 Berterusan (CQI)* rasmi PKS daripada dua dokumen sumber:
 
 | Fail | Kandungan yang dibaca |
@@ -115,19 +115,19 @@ Aliran kerja: **1** muat naik → **2** semak Template CORR setiap program
 
 **Maklumat Kepala Laporan** (kod kursus, nama kursus, jabatan, nama penyelaras dan
 sesi akademik) **hanya dipaparkan** dalam tab muat naik — tiada medan untuk ditaip
-kerana semuanya datang daripada **2. Maklumat Kursus** dan **6. Tetapan** (jabatan
+kerana semuanya datang daripada **1. Maklumat Kursus** dan **5. Tetapan** (jabatan
 daripada *Identiti Dokumen*). Laporan CQI dengan itu sentiasa menyambung data kursus
 yang sama. Nama pemegang tempat seperti "PENSYARAH" diabaikan. Pilihan **Cetak lajur
 CLO4** dinyalakan automatik apabila kursus mempunyai 4 CLO atau laporan PBCLOGSA
 mengandungi markah CLO4.
 
 **Sesi akademik** (sesi semasa, terdahulu dan hadapan) ditetapkan sekali di menu
-**6. Tetapan & Logo** → *Sesi Akademik Semasa* (format `II : 2025/2026`). Laporan CQI
+**5. Tetapan & Logo** → *Sesi Akademik Semasa* (format `II : 2025/2026`). Laporan CQI
 menggunakannya secara automatik; sesi yang dibaca daripada dokumen CORR/PBCLOGSA
 masih diutamakan untuk laporan tersebut.
 
 **Identiti dokumen** (institusi dan jabatan) juga ditetapkan sekali di menu
-**6. Tetapan & Logo** → *2. Identiti Dokumen*. Semua rekod kursus menggunakan nilai
+**5. Tetapan & Logo** → *2. Identiti Dokumen*. Semua rekod kursus menggunakan nilai
 yang sama, jadi medan ini tidak lagi ditaip dalam setiap kursus: Course Outline,
 JSU dan kepala Laporan CQI mengikut tetapan itu, dan menukarnya di Tetapan terus
 mengemas kini kursus yang sedang dibuka serta jabatan pada kepala Laporan CQI.
@@ -147,13 +147,14 @@ Rekod disimpan dalam jadual `cqi_reports` (satu rekod per kod kursus) dan boleh
 dibuka semula dari senarai **Rekod CQI Tersimpan**. Endpoint:
 `GET/POST /api/cqi`, `GET/DELETE /api/cqi/{kod}`, `POST /api/cqi/extract`.
 
-## Maklumat Kursus (menu 2)
+## Maklumat Kursus (menu 1)
 
-Menu **2. Maklumat Kursus (13 Item)** ialah tempat tunggal untuk identiti kursus, dan
+Menu **1. Maklumat Kursus (13 Item)** ialah tempat tunggal untuk identiti kursus, dan
 nilainya mengalir ke Course Outline, JSU dan Laporan CQI:
 
 | Bahagian | Medan |
 | --- | --- |
+| Import Silibus & Rekod | muat naik PDF silibus/JSON dan senarai rekod SQLite (buka/padam) |
 | Kod Dokumen | kod dokumen rasmi (PLSP-04 …) — institusi & jabatan diambil daripada Tetapan |
 | Item 1–5 | nama, kod, semester/tahun ditawarkan, kredit, pra-syarat, pemberat CA/FE, sinopsis |
 | Item 6–7 | CLO (kod, pernyataan, taksonomi, PLO) |
