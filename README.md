@@ -7,6 +7,31 @@ Jadual Spesifikasi Ujian Pentaksiran Berterusan (JSU PB) dan Laporan CQI
 Tauri 2 desktop app (React + TypeScript) dengan backend FastAPI + SQLite
 yang dibungkus sebagai sidecar.
 
+**Versi semasa: 1.0.0** — lihat [CHANGELOG.md](./CHANGELOG.md) untuk sejarah perubahan.
+
+## Versi & keluaran
+
+Versi diambil daripada `package.json` dan disuntik ke UI semasa build (`__APP_VERSION__`),
+jadi nombor pada kepala/pengaki tetingkap sentiasa sama dengan keluaran yang dipasang.
+Naikkan versi di **empat** tempat sebelum membuat keluaran baharu:
+
+1. `package.json` (+ `package-lock.json`)
+2. `src-tauri/tauri.conf.json`
+3. `src-tauri/Cargo.toml`
+4. `backend_api.py` (`FastAPI(..., version=...)`)
+
+Kemudian bina pemasang, tag dan terbitkan:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\build.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\package-portable.ps1
+git tag -a v1.0.0 -m "v1.0.0"
+git push origin v1.0.0
+```
+
+Kemudian muat naik `.exe`/`.msi` daripada `src-tauri\target\release\bundle\` ke
+GitHub Release bagi tag tersebut.
+
 ## Run in development
 
 Rust builds on Windows need the MSVC linker (`link.exe`) and the Windows SDK

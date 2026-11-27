@@ -526,7 +526,9 @@ export default function App() {
 
       <footer className="no-print bg-slate-950 text-slate-400 border-t border-slate-800 px-6 py-2.5 text-[11px] flex flex-wrap items-center justify-between gap-2">
         <div>© 2026 Hak Cipta Terpelihara • Politeknik Malaysia (JPPKK) • Sistem Kurikulum PLSP-04 & JSU PB</div>
-        <div className="text-sky-400 font-mono">Tauri 2 + React + FastAPI • SQLite Tempatan</div>
+        <div className="text-sky-400 font-mono">
+          v{__APP_VERSION__} • bina {__BUILD_DATE__} • Tauri 2 + React + FastAPI
+        </div>
       </footer>
     </div>
   );

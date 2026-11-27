@@ -1772,7 +1772,7 @@ class CqiExtractorEngine:
 # ==============================================================================
 # MODUL 6: APLIKASI FASTAPI & ENDPOINT REST
 # ==============================================================================
-app = FastAPI(title="Politeknik CO & JSU PB Sidecar API", version="2.0.0")
+app = FastAPI(title="Politeknik CO & JSU PB Sidecar API", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

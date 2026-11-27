@@ -18,7 +18,12 @@ export default function AppHeader({ courseCode, apiOnline, onSave, onPrintCo, on
         </div>
         <div>
           <div className="text-sm font-bold tracking-wide">PORTAL KURIKULUM POLITEKNIK (CO & JSU PB)</div>
-          <div className="text-[11px] text-slate-400">Tauri 2 + React + FastAPI Sidecar • Format Rasmi Lampiran 4 & JSU PB</div>
+          <div className="text-[11px] text-slate-400">
+            Tauri 2 + React + FastAPI Sidecar • Format Rasmi Lampiran 4 &amp; JSU PB
+            <span className="ml-2 px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-sky-300 font-mono">
+              v{__APP_VERSION__}
+            </span>
+          </div>
         </div>
       </div>
 
