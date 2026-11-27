@@ -32,6 +32,8 @@ git push origin v1.0.0
 Kemudian muat naik `.exe`/`.msi` daripada `src-tauri\target\release\bundle\` ke
 GitHub Release bagi tag tersebut.
 
+Keluaran terkini: <https://github.com/wilsonintai76/cms-jkm-pkd/releases>
+
 ## Run in development
 
 Rust builds on Windows need the MSVC linker (`link.exe`) and the Windows SDK
