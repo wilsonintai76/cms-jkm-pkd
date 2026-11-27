@@ -2,8 +2,6 @@ import React, { useRef, useState } from "react";
 import { FileText, RefreshCw, Trash2, Upload } from "lucide-react";
 import {
   computeProgStats,
-  nextSessionOf,
-  prevSessionOf,
   tumpangOf,
 } from "../lib/cqi";
 import type { CqiBundle } from "../lib/cqi";
@@ -45,16 +43,6 @@ export default function CqiImportPanel({
   const meta = bundle.meta;
 
   const patchMeta = (patch: Partial<typeof meta>) => onChange({ ...bundle, meta: { ...meta, ...patch } });
-
-  const changeSession = (value: string) => {
-    const autoPrev = prevSessionOf(meta.currSession);
-    const autoNext = nextSessionOf(meta.currSession);
-    patchMeta({
-      currSession: value,
-      prevSession: !meta.prevSession || meta.prevSession === autoPrev ? prevSessionOf(value) : meta.prevSession,
-      nextSession: !meta.nextSession || meta.nextSession === autoNext ? nextSessionOf(value) : meta.nextSession,
-    });
-  };
 
   const accept = (list: FileList | null) => {
     const files = Array.from(list || []).filter((f) => f.name.toLowerCase().endsWith(".pdf"));
@@ -191,32 +179,21 @@ export default function CqiImportPanel({
             />
           </label>
           <div className="grid grid-cols-1 gap-2 pt-1">
-            <label className="block">
-              <span className="text-[11px] font-semibold text-slate-600">Sesi Semasa</span>
-              <input
-                className={FIELD}
-                placeholder="II : 2025/2026"
-                value={meta.currSession}
-                onChange={(e) => changeSession(e.target.value)}
-              />
-            </label>
-            <div className="grid grid-cols-2 gap-2">
-              <label className="block">
-                <span className="text-[11px] font-semibold text-slate-600">Sesi Terdahulu</span>
-                <input
-                  className={FIELD}
-                  value={meta.prevSession}
-                  onChange={(e) => patchMeta({ prevSession: e.target.value })}
-                />
-              </label>
-              <label className="block">
-                <span className="text-[11px] font-semibold text-slate-600">Sesi Hadapan</span>
-                <input
-                  className={FIELD}
-                  value={meta.nextSession}
-                  onChange={(e) => patchMeta({ nextSession: e.target.value })}
-                />
-              </label>
+            <div className="rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-2 space-y-0.5">
+              <div className="text-[11px] font-semibold text-slate-600">Sesi Akademik</div>
+              {meta.currSession ? (
+                <div className="text-xs">
+                  <span className="font-bold text-slate-900">{meta.currSession}</span>
+                  <div className="text-[11px] text-slate-500">
+                    Terdahulu {meta.prevSession || "-"} • Hadapan {meta.nextSession || "-"}
+                  </div>
+                </div>
+              ) : (
+                <div className="text-[11px] text-amber-700">Belum ditetapkan — isi di menu 6. Tetapan.</div>
+              )}
+              <div className="text-[10px] text-slate-400">
+                Diambil daripada tetapan aplikasi atau dokumen CORR/PBCLOGSA.
+              </div>
             </div>
             <label className="flex items-center gap-2 text-xs font-semibold text-slate-700 pt-1">
               <input

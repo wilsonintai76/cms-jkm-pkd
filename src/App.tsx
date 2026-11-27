@@ -13,7 +13,7 @@ import CourseOutlineModule from "./components/CourseOutlineModule";
 import JsuModule from "./components/JsuModule";
 import CqiModule from "./components/CqiModule";
 import SettingsPanel from "./components/SettingsPanel";
-import { bundleFromExtract, createEmptyCqi, metaFromCourse } from "./lib/cqi";
+import { bundleFromExtract, createEmptyCqi, metaFromCourse, withSession } from "./lib/cqi";
 import type { CqiBundle } from "./lib/cqi";
 
 const INITIAL_DRAFT = {
@@ -42,6 +42,7 @@ export default function App() {
   const [apiPortable, setApiPortable] = useState(false);
   const [logoUri, setLogoUri] = useState<string | null>(null);
   const [geminiKey, setGeminiKey] = useState("");
+  const [currentSession, setCurrentSession] = useState("");
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState<{ msg: string; type: string } | null>(null);
   const [qDraft, setQDraft] = useState(INITIAL_DRAFT);
@@ -77,6 +78,7 @@ export default function App() {
         if (setRes.ok) {
           const s = await setRes.json();
           if (s.gemini_api_key && !cancelled) setGeminiKey(s.gemini_api_key);
+          if (s.current_session && !cancelled) setCurrentSession(s.current_session);
         }
         const cqiRes = await fetch(`${API_BASE}/cqi`);
         if (cqiRes.ok) {
@@ -238,8 +240,8 @@ export default function App() {
       }
       const parsed = await res.json();
       const next = bundleFromExtract(parsed);
-      if (!next.meta.coordinator) next.meta.coordinator = course.prepared_by || "";
-      if (!next.meta.jabatan) next.meta.jabatan = course.department || "";
+      next.meta = metaFromCourse(course, next.meta);
+      next.meta = withSession(next.meta, currentSession);
       setCqi(next);
       setCqiProg(next.programmes[0] || "");
       notify(
@@ -279,6 +281,18 @@ export default function App() {
       return meta === prev.meta ? prev : { ...prev, meta };
     });
   }, [course]);
+
+  // Sesi akademik global (menu 6) mengisi sesi laporan CQI yang masih kosong.
+  const appliedSession = useRef("");
+  useEffect(() => {
+    if (!currentSession.trim()) return;
+    const previous = appliedSession.current;
+    setCqi((prev) => {
+      const meta = withSession(prev.meta, currentSession, previous);
+      return meta === prev.meta ? prev : { ...prev, meta };
+    });
+    appliedSession.current = currentSession.trim();
+  }, [currentSession]);
 
   const fillCqiFromCourse = () => {
     if (!course.course_code && !course.course_name) {
@@ -537,6 +551,8 @@ export default function App() {
               dbPath={dbPath}
               geminiKey={geminiKey}
               onGeminiKeyChange={setGeminiKey}
+              session={currentSession}
+              onSessionChange={setCurrentSession}
               onLogoChange={setLogoUri}
               onNotify={notify}
             />

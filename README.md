@@ -119,6 +119,11 @@ jadi laporan CQI menyambung data kursus yang sama. Nilai yang sudah diisi tidak
 ditimpa semasa anda menyunting kursus; butang **Dari Kursus** mengisi semula semua
 medan itu bila perlu. Nama pemegang tempat seperti "PENSYARAH" diabaikan.
 
+**Sesi akademik** (sesi semasa, terdahulu dan hadapan) ditetapkan sekali di menu
+**6. Tetapan & Logo** → *Sesi Akademik Semasa* (format `II : 2025/2026`). Laporan CQI
+menggunakannya secara automatik; sesi yang dibaca daripada dokumen CORR/PBCLOGSA
+masih diutamakan untuk laporan tersebut.
+
 Butiran borang:
 - Bahagian A: lajur sesi terdahulu boleh ditaip, lajur sesi semasa dikira
   automatik, lajur analisis (naik/turun) dikira daripada kedua-duanya.

@@ -1,5 +1,6 @@
 import React from "react";
 import { API_BASE } from "../constants";
+import { SESSION_RE, nextSessionOf, prevSessionOf } from "../lib/cqi";
 
 type SettingsPanelProps = {
   logoUri: string | null;
@@ -7,7 +8,9 @@ type SettingsPanelProps = {
   apiPortable: boolean;
   dbPath: string;
   geminiKey: string;
+  session: string;
   onGeminiKeyChange: (value: string) => void;
+  onSessionChange: (value: string) => void;
   onLogoChange: (uri: string) => void;
   onNotify: (msg: string, type?: string) => void;
 };
@@ -18,7 +21,9 @@ export default function SettingsPanel({
   apiPortable,
   dbPath,
   geminiKey,
+  session,
   onGeminiKeyChange,
+  onSessionChange,
   onLogoChange,
   onNotify,
 }: SettingsPanelProps) {
@@ -44,11 +49,13 @@ export default function SettingsPanel({
       await fetch(`${API_BASE}/settings`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ gemini_api_key: geminiKey }),
+        body: JSON.stringify({ gemini_api_key: geminiKey, current_session: session.trim() }),
       });
     }
     onNotify("Tetapan disimpan!", "success");
   };
+
+  const sessionValid = SESSION_RE.test(session.trim());
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-5xl mx-auto">
@@ -76,7 +83,28 @@ export default function SettingsPanel({
       </div>
 
       <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-3 text-xs">
-        <h2 className="text-base font-bold">2. Tetapan Lalai & Gemini API Key</h2>
+        <h2 className="text-base font-bold">2. Tetapan Lalai &amp; Gemini API Key</h2>
+        <label className="block space-y-1">
+          <span className="font-semibold">Sesi Akademik Semasa</span>
+          <input
+            value={session}
+            onChange={(e) => onSessionChange(e.target.value)}
+            className="w-full border border-slate-300 rounded-lg px-3 py-2 font-semibold"
+            placeholder="II : 2025/2026"
+          />
+          {session.trim() === "" ? (
+            <span className="text-slate-500">
+              Digunakan oleh Laporan CQI (sesi semasa, terdahulu dan hadapan).
+            </span>
+          ) : sessionValid ? (
+            <span className="text-emerald-700">
+              Terdahulu: <strong>{prevSessionOf(session.trim()) || "-"}</strong> • Hadapan:{" "}
+              <strong>{nextSessionOf(session.trim()) || "-"}</strong>
+            </span>
+          ) : (
+            <span className="text-rose-700">Format perlu seperti <strong>II : 2025/2026</strong>.</span>
+          )}
+        </label>
         <label className="block space-y-1">
           <span className="font-semibold">GEMINI_API_KEY (Pilihan untuk Ringkasan AI)</span>
           <input

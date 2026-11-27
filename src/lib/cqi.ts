@@ -224,6 +224,22 @@ export function metaFromCourse(
   return unchanged ? meta : next;
 }
 
+/**
+ * Lengkapkan sesi laporan CQI daripada tetapan aplikasi. `previous` ialah nilai
+ * tetapan yang dipakai sebelum ini, supaya perubahan tetapan mengemas kini sesi
+ * yang dahulunya diisi oleh tetapan (bukan sesi yang datang dari dokumen).
+ */
+export function withSession(meta: CqiMeta, session: string, previous = ""): CqiMeta {
+  const value = (session || "").trim();
+  if (!value || !SESSION_RE.test(value)) return meta;
+  const current = meta.currSession.trim();
+  if (current && current !== previous.trim()) return meta;
+  const prev = prevSessionOf(value) || meta.prevSession;
+  const next = nextSessionOf(value) || meta.nextSession;
+  if (current === value && meta.prevSession === prev && meta.nextSession === next) return meta;
+  return { ...meta, currSession: value, prevSession: prev, nextSession: next };
+}
+
 export function programmesOf(students: CqiStudent[]): string[] {  return Array.from(new Set(students.map((s) => s.prog).filter(Boolean))).sort();
 }
 
