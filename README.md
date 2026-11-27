@@ -124,6 +124,14 @@ medan itu bila perlu. Nama pemegang tempat seperti "PENSYARAH" diabaikan.
 menggunakannya secara automatik; sesi yang dibaca daripada dokumen CORR/PBCLOGSA
 masih diutamakan untuk laporan tersebut.
 
+**Identiti dokumen** (institusi dan jabatan) juga ditetapkan sekali di menu
+**6. Tetapan & Logo** → *2. Identiti Dokumen*. Semua rekod kursus menggunakan nilai
+yang sama, jadi medan ini tidak lagi ditaip dalam setiap kursus: Course Outline,
+JSU dan kepala Laporan CQI mengikut tetapan itu, dan menukarnya di Tetapan terus
+mengemas kini kursus yang sedang dibuka serta jabatan pada kepala Laporan CQI.
+Untuk rekod lama yang belum ada tetapan, medan ini diisi daripada kursus yang
+dibuka — klik **Simpan Tetapan** untuk mengekalkannya.
+
 Butiran borang:
 - Bahagian A: lajur sesi terdahulu boleh ditaip, lajur sesi semasa dikira
   automatik, lajur analisis (naik/turun) dikira daripada kedua-duanya.
@@ -144,7 +152,7 @@ nilainya mengalir ke Course Outline, JSU dan Laporan CQI:
 
 | Bahagian | Medan |
 | --- | --- |
-| Identiti Dokumen | institusi, jabatan, kod dokumen (PLSP-04 …) |
+| Kod Dokumen | kod dokumen rasmi (PLSP-04 …) — institusi & jabatan diambil daripada Tetapan |
 | Item 1–5 | nama, kod, semester/tahun ditawarkan, kredit, pra-syarat, pemberat CA/FE, sinopsis |
 | Item 6–7 | CLO (kod, pernyataan, taksonomi, PLO) |
 | Item 9 & 11 | keperluan khas, maklumat tambahan |

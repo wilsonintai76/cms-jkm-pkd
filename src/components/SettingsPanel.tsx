@@ -9,8 +9,12 @@ type SettingsPanelProps = {
   dbPath: string;
   geminiKey: string;
   session: string;
+  institution: string;
+  department: string;
   onGeminiKeyChange: (value: string) => void;
   onSessionChange: (value: string) => void;
+  onInstitutionChange: (value: string) => void;
+  onDepartmentChange: (value: string) => void;
   onLogoChange: (uri: string) => void;
   onNotify: (msg: string, type?: string) => void;
 };
@@ -22,8 +26,12 @@ export default function SettingsPanel({
   dbPath,
   geminiKey,
   session,
+  institution,
+  department,
   onGeminiKeyChange,
   onSessionChange,
+  onInstitutionChange,
+  onDepartmentChange,
   onLogoChange,
   onNotify,
 }: SettingsPanelProps) {
@@ -49,7 +57,12 @@ export default function SettingsPanel({
       await fetch(`${API_BASE}/settings`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ gemini_api_key: geminiKey, current_session: session.trim() }),
+        body: JSON.stringify({
+          gemini_api_key: geminiKey,
+          current_session: session.trim(),
+          institution: institution.trim(),
+          department: department.trim(),
+        }),
       });
     }
     onNotify("Tetapan disimpan!", "success");
@@ -83,7 +96,34 @@ export default function SettingsPanel({
       </div>
 
       <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-3 text-xs">
-        <h2 className="text-base font-bold">2. Tetapan Lalai &amp; Gemini API Key</h2>
+        <div>
+          <h2 className="text-base font-bold">2. Identiti Dokumen</h2>
+          <p className="text-[11px] text-slate-500">
+            Digunakan pada kepala Course Outline, JSU dan Laporan CQI untuk semua kursus.
+          </p>
+        </div>
+        <label className="block space-y-1">
+          <span className="font-semibold">Institusi</span>
+          <input
+            value={institution}
+            onChange={(e) => onInstitutionChange(e.target.value)}
+            className="w-full border border-slate-300 rounded-lg px-3 py-2"
+            placeholder="POLITEKNIK MALAYSIA - KUCHING SARAWAK"
+          />
+        </label>
+        <label className="block space-y-1">
+          <span className="font-semibold">Jabatan</span>
+          <input
+            value={department}
+            onChange={(e) => onDepartmentChange(e.target.value)}
+            className="w-full border border-slate-300 rounded-lg px-3 py-2"
+            placeholder="DEPARTMENT OF MECHANICAL ENGINEERING"
+          />
+        </label>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-3 text-xs md:col-span-2">
+        <h2 className="text-base font-bold">3. Tetapan Lalai &amp; Gemini API Key</h2>
         <label className="block space-y-1">
           <span className="font-semibold">Sesi Akademik Semasa</span>
           <input
@@ -124,7 +164,7 @@ export default function SettingsPanel({
       </div>
 
       <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-2 text-xs md:col-span-2">
-        <h2 className="text-base font-bold">3. Lokasi Storan Data</h2>
+        <h2 className="text-base font-bold">4. Lokasi Storan Data</h2>
         <div className="flex items-center gap-2">
           <span
             className={`px-2 py-0.5 rounded border font-semibold ${

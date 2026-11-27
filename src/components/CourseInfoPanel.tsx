@@ -55,30 +55,13 @@ export default function CourseInfoPanel({ course, checklist, onChange }: CourseI
 
       <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-3">
         <div>
-          <h2 className="text-base font-bold">Identiti Dokumen</h2>
+          <h2 className="text-base font-bold">Kod Dokumen</h2>
           <p className="text-[11px] text-slate-500">
-            Digunakan pada kepala Course Outline, JSU dan Laporan CQI — tukar di sini sahaja.
+            Dicetak pada penjuru muka surat Course Outline. Institusi dan jabatan pula diambil
+            daripada <strong>Tetapan › 2. Identiti Dokumen</strong>.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-          <label className="space-y-1">
-            <span className="font-semibold text-slate-600">Institusi</span>
-            <input
-              value={course.institution || ""}
-              onChange={(e) => setField("institution", e.target.value)}
-              className={INPUT}
-              placeholder="POLITEKNIK MALAYSIA - KUCHING SARAWAK"
-            />
-          </label>
-          <label className="space-y-1">
-            <span className="font-semibold text-slate-600">Jabatan</span>
-            <input
-              value={course.department || ""}
-              onChange={(e) => setField("department", e.target.value)}
-              className={INPUT}
-              placeholder="DEPARTMENT OF MECHANICAL ENGINEERING"
-            />
-          </label>
           <label className="space-y-1">
             <span className="font-semibold text-slate-600">Kod Dokumen</span>
             <input
@@ -385,7 +368,8 @@ export default function CourseInfoPanel({ course, checklist, onChange }: CourseI
           </label>
         </div>
         <p className="text-[11px] text-slate-500">
-          Nama penyelaras dan jabatan di atas juga mengisi kepala Laporan CQI secara automatik.
+          Nama penyelaras di atas juga mengisi kepala Laporan CQI, bersama jabatan daripada
+          Tetapan.
         </p>
       </div>
     </div>

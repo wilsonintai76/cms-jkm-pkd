@@ -43,6 +43,8 @@ export default function App() {
   const [logoUri, setLogoUri] = useState<string | null>(null);
   const [geminiKey, setGeminiKey] = useState("");
   const [currentSession, setCurrentSession] = useState("");
+  const [institution, setInstitution] = useState("");
+  const [department, setDepartment] = useState("");
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState<{ msg: string; type: string } | null>(null);
   const [qDraft, setQDraft] = useState(INITIAL_DRAFT);
@@ -79,6 +81,8 @@ export default function App() {
           const s = await setRes.json();
           if (s.gemini_api_key && !cancelled) setGeminiKey(s.gemini_api_key);
           if (s.current_session && !cancelled) setCurrentSession(s.current_session);
+          if (s.institution && !cancelled) setInstitution(s.institution);
+          if (s.department && !cancelled) setDepartment(s.department);
         }
         const cqiRes = await fetch(`${API_BASE}/cqi`);
         if (cqiRes.ok) {
@@ -293,6 +297,45 @@ export default function App() {
     });
     appliedSession.current = currentSession.trim();
   }, [currentSession]);
+
+  // Rekod lama yang belum ada tetapan identiti: isi medan Tetapan sekali (pengguna
+  // hanya perlu klik "Simpan Tetapan" untuk mengekalkannya).
+  const seededIdentity = useRef(false);
+  useEffect(() => {
+    if (seededIdentity.current) return;
+    if (!course.course_code) return;
+    if (!course.institution && !course.department) return;
+    seededIdentity.current = true;
+    if (!institution.trim() && course.institution) setInstitution(course.institution);
+    if (!department.trim() && course.department) setDepartment(course.department);
+  }, [course.course_code, course.institution, course.department, institution, department]);
+
+  // Institusi & jabatan ialah tetapan global (menu 6) — ia mengatasi nilai dalam kursus.
+  useEffect(() => {
+    const inst = institution.trim();
+    const dept = department.trim();
+    if (!inst && !dept) return;
+    setCourse((prev) => {
+      const next = {
+        ...prev,
+        institution: inst || prev.institution,
+        department: dept || prev.department,
+      };
+      const same =
+        next.institution === prev.institution && next.department === prev.department;
+      return same ? prev : next;
+    });
+    if (dept) {
+      setCqi((prev) =>
+        prev.meta.jabatan === dept
+          ? prev
+          : { ...prev, meta: { ...prev.meta, jabatan: dept } },
+      );
+    }
+    // `course` dalam senarai kebergantungan supaya nilai tetapan dipakai semula
+    // setiap kali rekod kursus lain dibuka (rekod lama mungkin simpan nilai usang).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [institution, department, course]);
 
   const fillCqiFromCourse = () => {
     if (!course.course_code && !course.course_name) {
@@ -553,6 +596,10 @@ export default function App() {
               onGeminiKeyChange={setGeminiKey}
               session={currentSession}
               onSessionChange={setCurrentSession}
+              institution={institution}
+              department={department}
+              onInstitutionChange={setInstitution}
+              onDepartmentChange={setDepartment}
               onLogoChange={setLogoUri}
               onNotify={notify}
             />
