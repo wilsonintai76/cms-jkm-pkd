@@ -39,12 +39,26 @@ export default function CoEditor({
     onChange({ ...course, topics: course.topics.filter((_: unknown, i: number) => i !== idx) });
   };
 
+  const autoWeeks = course.week_auto !== false;
+
   return (
     <div className="space-y-4">
       <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-base font-bold">Item 12: Jadual Mingguan & Ringkasan Topik</h2>
           <div className="flex gap-2">
+            <label
+              title="Julat minggu dikira daripada jam kuliah ÷ jam kontak seminggu"
+              className="px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
+            >
+              <input
+                type="checkbox"
+                checked={autoWeeks}
+                onChange={(e) => onChange({ ...course, week_auto: e.target.checked })}
+                className="accent-sky-600"
+              />
+              Minggu auto
+            </label>
             <button
               onClick={addTopic}
               className="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold flex items-center gap-1"
@@ -95,7 +109,9 @@ export default function CoEditor({
                 <input
                   value={t.week}
                   onChange={(e) => updateTopic(idx, { week: e.target.value })}
-                  className="col-span-2 border border-slate-300 rounded-lg px-2 py-1.5 bg-white text-center font-semibold"
+                  disabled={autoWeeks}
+                  title={autoWeeks ? "Minggu dikira automatik daripada jam kuliah" : "Taip julat minggu"}
+                  className="col-span-2 border border-slate-300 rounded-lg px-2 py-1.5 bg-white text-center font-semibold disabled:bg-slate-100 disabled:text-slate-500"
                 />
                 <button
                   onClick={() => removeTopic(idx)}

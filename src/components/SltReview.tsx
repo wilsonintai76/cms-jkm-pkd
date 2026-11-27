@@ -93,6 +93,7 @@ export default function SltReview({ course, onChange, onEdit }: SltReviewProps) 
           <thead>
             <tr className="text-center">
               <th className={`${TH} text-left`}>Topik</th>
+              <th className={TH}>Minggu</th>
               <th className={TH}>Kuliah (L)</th>
               <th className={TH}>Kendiri (IL)</th>
               <th className={TH}>SLT</th>
@@ -101,7 +102,7 @@ export default function SltReview({ course, onChange, onEdit }: SltReviewProps) 
           <tbody>
             {review.rows.length === 0 && (
               <tr>
-                <td className={`${TD} text-center text-slate-500`} colSpan={4}>
+                <td className={`${TD} text-center text-slate-500`} colSpan={5}>
                   Tiada topik.
                 </td>
               </tr>
@@ -114,6 +115,7 @@ export default function SltReview({ course, onChange, onEdit }: SltReviewProps) 
                     <span className="font-bold">{r.code}</span>{" "}
                     <span className="uppercase text-slate-700">{r.title}</span>
                   </td>
+                  <td className={`${TD} text-center font-semibold`}>{r.week}</td>
                   <td className={`${TD} text-center ${skewed ? "text-amber-700 font-semibold" : ""}`}>{fmt(r.lect)}</td>
                   <td className={`${TD} text-center ${skewed ? "text-amber-700 font-semibold" : ""}`}>{fmt(r.indep)}</td>
                   <td className={`${TD} text-center font-bold`}>{fmt(r.slt)}</td>
@@ -121,7 +123,9 @@ export default function SltReview({ course, onChange, onEdit }: SltReviewProps) 
               );
             })}
             <tr className="bg-slate-100 font-bold">
-              <td className={TD}>TOTAL TOPIK</td>
+              <td className={TD} colSpan={2}>
+                TOTAL TOPIK
+              </td>
               <td className={`${TD} text-center`}>{fmt(review.topic.lect)}</td>
               <td className={`${TD} text-center`}>{fmt(review.topic.indep)}</td>
               <td className={`${TD} text-center`}>{fmt(review.topic.slt)}</td>
@@ -129,8 +133,9 @@ export default function SltReview({ course, onChange, onEdit }: SltReviewProps) 
           </tbody>
         </table>
         <p className="text-[11px] text-slate-500">
-          Jam berwarna amber bermaksud jam kendiri tidak sama dengan jam kuliah — silibus biasanya menetapkan
-          kedua-duanya sama bagi setiap topik.
+          Minggu dikira automatik daripada jam kuliah ÷ jam kontak seminggu ({fmt(review.contact.perWeek)} jam). Jam
+          berwarna amber bermaksud jam kendiri tidak sama dengan jam kuliah — silibus biasanya menetapkan kedua-duanya
+          sama bagi setiap topik.
         </p>
       </div>
 

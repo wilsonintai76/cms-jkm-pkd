@@ -106,7 +106,7 @@ boleh dibanding terus dengan silibus:
 
 | Jadual | Kandungan |
 | --- | --- |
-| Taburan SLT mengikut topik | jam kuliah (L) dan kendiri (IL) setiap topik + jumlah |
+| Taburan SLT mengikut topik | julat minggu, jam kuliah (L) dan kendiri (IL) setiap topik + jumlah |
 | Penilaian | setiap CA (peratus, masa penilaian, pembelajaran kendiri, SLT), penilaian akhir dan grand total |
 | Jam kontak | jumlah L + masa penilaian CA, dibahagi minggu pengajian (boleh diubah, lalai 14) |
 
@@ -114,6 +114,15 @@ Empat semakan dipaparkan hijau/amber: jumlah SLT = kredit × 40, SLT topik + CA 
 = jumlah SLT, peratus CA + FE = 100%, dan setiap topik mempunyai jam kuliah. Jam
 kendiri yang tidak sama dengan jam kuliah ditanda amber kerana silibus biasanya
 menetapkan kedua-duanya sama. Nilai SLT disunting di tab 1.
+
+### Minggu automatik
+
+Lajur **Minggu** dalam Item 12 (Jadual Mingguan) dikira automatik daripada taburan
+SLT, iaitu `jam kuliah terkumpul ÷ jam kontak seminggu` (jumlah SLT kontak ÷ minggu
+pengajian). Contoh untuk 3 jam/minggu: 4.5 jam → `M1-M2`, 3 jam → `M3`, 6 jam →
+`M6-M7`. Julat ini dikemas kini serta-merta apabila jam SLT atau minggu pengajian
+berubah, dan digunakan dalam pratonton/cetakan Lampiran 4. Tanda **Minggu auto**
+pada Item 12 boleh dimatikan untuk menaip julat minggu sendiri (`week_auto`).
 
 ## Bundle layout
 

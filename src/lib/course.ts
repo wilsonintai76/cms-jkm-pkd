@@ -29,6 +29,7 @@ export function createEmptyCourse(): Course {
     semester_offered: "1",
     credit_value: 3,
     study_weeks: 14,
+    week_auto: true,
     prerequisite: "",
     clos: [],
     ca_weight: 50,

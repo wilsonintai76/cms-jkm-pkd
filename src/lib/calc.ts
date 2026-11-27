@@ -22,7 +22,7 @@ export function targetSltOf(course: Course): number {
   return (Number(course.credit_value) || 3) * 40;
 }
 
-export type SltReviewRow = { code: string; title: string; lect: number; indep: number; slt: number };
+export type SltReviewRow = { code: string; title: string; week: string; lect: number; indep: number; slt: number };
 
 export type SltAssessmentRow = { name: string; pct: number; f2f: number; nf2f: number; slt: number };
 
@@ -67,7 +67,7 @@ export function computeSltReview(course: Course): SltReview {
   const rows: SltReviewRow[] = topics.map((t) => {
     const lect = round2(num(t, "f2f_lect"));
     const indep = round2(num(t, "nf2f_indep"));
-    return { code: t.code, title: t.title || "", lect, indep, slt: round2(lect + indep) };
+    return { code: t.code, title: t.title || "", week: t.week || "", lect, indep, slt: round2(lect + indep) };
   });
 
   const topicSlt = round2(rows.reduce((a, r) => a + r.slt, 0));
@@ -161,6 +161,38 @@ export function computeSltReview(course: Course): SltReview {
     unmapped,
     checks,
   };
+}
+
+/** Julat minggu (M1-M2, M3, ...) bagi setiap topik, dikira daripada jam kuliah dan kadar jam/minggu. */
+export function deriveTopicWeeks(course: Course): string[] {
+  const { rows, contact } = computeSltReview(course);
+  const rate = contact.perWeek;
+  const out: string[] = [];
+  let cumulative = 0;
+  let prevEnd = 0;
+  rows.forEach((row, i) => {
+    cumulative = round2(cumulative + row.lect);
+    const start = prevEnd + 1;
+    const end = rate > 0 ? Math.max(start, Math.ceil(cumulative / rate - 1e-9)) : start;
+    out[i] = start === end ? `M${start}` : `M${start}-M${end}`;
+    prevEnd = end;
+  });
+  return out;
+}
+
+/** Kira semula lajur minggu semua topik selagi pengguna tidak mematikan mod auto. */
+export function applyAutoWeeks(course: Course): Course {
+  if (course.week_auto === false) return course;
+  const weeks = deriveTopicWeeks(course);
+  const topics: Topic[] = course.topics || [];
+  let changed = false;
+  const next = topics.map((t, i) => {
+    const week = weeks[i];
+    if (week === undefined || t.week === week) return t;
+    changed = true;
+    return { ...t, week };
+  });
+  return changed ? { ...course, topics: next } : course;
 }
 
 /** PLO unik yang dirujuk oleh CLO, mengikut susunan kemunculan. */

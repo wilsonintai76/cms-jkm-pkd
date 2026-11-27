@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { API_BASE } from "./constants";
 import { createEmptyCourse } from "./lib/course";
-import { buildChecklist, computeJsu, computeSltTotals, targetSltOf, uniquePlos } from "./lib/calc";
+import { applyAutoWeeks, buildChecklist, computeJsu, computeSltTotals, targetSltOf, uniquePlos } from "./lib/calc";
 import type { Course } from "./lib/calc";
 import AppHeader from "./components/AppHeader";
 import Sidebar from "./components/Sidebar";
@@ -149,7 +149,7 @@ export default function App() {
     if (!apiOnline) {
       if (file.name.toLowerCase().endsWith(".json")) {
         const txt = await file.text();
-        setCourse(JSON.parse(txt));
+        setCourse(applyAutoWeeks(JSON.parse(txt)));
         notify(`Fail JSON '${file.name}' dimuatkan!`, "success");
       } else {
         notify("Pelayan backend tidak aktif — PDF tidak dapat diekstrak.", "warning");
@@ -163,7 +163,7 @@ export default function App() {
       const res = await fetch(`${API_BASE}/upload-syllabus`, { method: "POST", body: fd });
       if (!res.ok) throw new Error(await res.text());
       const parsed = await res.json();
-      setCourse(parsed);
+      setCourse(applyAutoWeeks(parsed));
       const listRes = await fetch(`${API_BASE}/courses`);
       if (listRes.ok) setSavedList(await listRes.json());
       notify(`Silibus '${file.name}' (${parsed.course_code}) berjaya diekstrak & disimpan!`, "success");
@@ -179,7 +179,8 @@ export default function App() {
     try {
       const res = await fetch(`${API_BASE}/courses/${encodeURIComponent(code)}`);
       if (res.ok) {
-        setCourse(await res.json());
+        const loaded = await res.json();
+        setCourse(applyAutoWeeks(loaded));
         notify(`Rekod '${code}' dimuatkan.`, "success");
       }
     } catch (err: any) {
@@ -309,7 +310,7 @@ export default function App() {
       const last = { ...next[next.length - 1] };
       last.nf2f_indep = Math.max(0, Math.round(((Number(last.nf2f_indep) || 0) + diff) * 100) / 100);
       next[next.length - 1] = last;
-      return { ...prev, topics: next };
+      return applyAutoWeeks({ ...prev, topics: next });
     });
     notify(`SLT diimbangkan kepada ${targetSlt} jam.`, "success");
   };
@@ -464,7 +465,7 @@ export default function App() {
               busy={busy}
               logoUri={logoUri}
               uniquePlos={plos}
-              onChange={setCourse}
+              onChange={(next) => setCourse(applyAutoWeeks(next))}
               onRegenerate={regenerateNarratives}
               onAutoBalance={autoBalanceSlt}
               onExportWord={exportWord}
