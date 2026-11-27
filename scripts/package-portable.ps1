@@ -48,7 +48,7 @@ start "" "co-jsu-desktop.exe"
     Set-Content -Path (Join-Path $out "Mula co-jsu-desktop.bat") -Value $launcher -Encoding ASCII
 
     $readme = @"
-co-jsu-desktop (versi mudah alih / portable) — v$pkgVersion
+co-jsu-desktop (versi mudah alih / portable) - v$pkgVersion
 ===========================================
 
 CARA GUNA
