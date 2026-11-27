@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { API_BASE } from "../constants";
-import { SESSION_RE, nextSessionOf, prevSessionOf } from "../lib/cqi";
+import { SESSION_RE, sessionNeighbours, sortSessions } from "../lib/cqi";
 
 type SettingsPanelProps = {
   logoUri: string | null;
@@ -9,10 +9,12 @@ type SettingsPanelProps = {
   dbPath: string;
   geminiKey: string;
   session: string;
+  sessions: string[];
   institution: string;
   department: string;
   onGeminiKeyChange: (value: string) => void;
   onSessionChange: (value: string) => void;
+  onSessionsChange: (list: string[]) => void;
   onInstitutionChange: (value: string) => void;
   onDepartmentChange: (value: string) => void;
   onLogoChange: (uri: string) => void;
@@ -26,15 +28,19 @@ export default function SettingsPanel({
   dbPath,
   geminiKey,
   session,
+  sessions,
   institution,
   department,
   onGeminiKeyChange,
   onSessionChange,
+  onSessionsChange,
   onInstitutionChange,
   onDepartmentChange,
   onLogoChange,
   onNotify,
 }: SettingsPanelProps) {
+  const [newRoman, setNewRoman] = useState("I");
+  const [newYear, setNewYear] = useState(String(new Date().getFullYear()));
   const handleLogo = async (file: File) => {
     if (apiOnline) {
       const fd = new FormData();
@@ -60,6 +66,7 @@ export default function SettingsPanel({
         body: JSON.stringify({
           gemini_api_key: geminiKey,
           current_session: session.trim(),
+          sessions: JSON.stringify(sessions),
           institution: institution.trim(),
           department: department.trim(),
         }),
@@ -69,6 +76,22 @@ export default function SettingsPanel({
   };
 
   const sessionValid = SESSION_RE.test(session.trim());
+  const preview = sessionValid ? sessionNeighbours(sessions, session) : { prev: "", next: "" };
+  const addSession = () => {
+    const label = `${newRoman} : ${newYear}/${Number(newYear) + 1}`;
+    if (!SESSION_RE.test(label)) {
+      onNotify("Tahun sesi mesti 4 digit, cth. 2025.", "warning");
+      return;
+    }
+    const list = sortSessions([...sessions, label]);
+    onSessionsChange(list);
+    if (!session.trim()) onSessionChange(label);
+  };
+  const removeSession = (target: string) => {
+    const list = sessions.filter((s) => s !== target);
+    onSessionsChange(list);
+    if (session.trim() === target) onSessionChange(list[list.length - 1] || "");
+  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-5xl mx-auto">
@@ -124,27 +147,84 @@ export default function SettingsPanel({
 
       <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-3 text-xs md:col-span-2">
         <h2 className="text-base font-bold">3. Tetapan Lalai &amp; Gemini API Key</h2>
-        <label className="block space-y-1">
-          <span className="font-semibold">Sesi Akademik Semasa</span>
-          <input
-            value={session}
-            onChange={(e) => onSessionChange(e.target.value)}
-            className="w-full border border-slate-300 rounded-lg px-3 py-2 font-semibold"
-            placeholder="II : 2025/2026"
-          />
-          {session.trim() === "" ? (
-            <span className="text-slate-500">
-              Digunakan oleh Laporan CQI (sesi semasa, terdahulu dan hadapan).
-            </span>
-          ) : sessionValid ? (
+        <div className="block space-y-1.5">
+          <span className="font-semibold">Sesi Akademik</span>
+          <div className="flex flex-wrap gap-1.5">
+            {sessions.length === 0 && (
+              <span className="text-slate-500">Belum ada sesi — tambah di bawah.</span>
+            )}
+            {sessions.map((s) => {
+              const active = s === session.trim();
+              return (
+                <span
+                  key={s}
+                  className={`px-2 py-1 rounded-lg border flex items-center gap-1 ${
+                    active
+                      ? "bg-sky-50 border-sky-300 text-sky-900 font-bold"
+                      : "bg-white border-slate-300 text-slate-700"
+                  }`}
+                >
+                  <button
+                    onClick={() => onSessionChange(s)}
+                    title="Jadikan sesi semasa (lalai untuk kursus baharu)"
+                    className="font-inherit"
+                  >
+                    {s}
+                  </button>
+                  <button
+                    onClick={() => removeSession(s)}
+                    title="Buang sesi daripada senarai"
+                    className="text-rose-600 hover:text-rose-700 font-bold"
+                  >
+                    ×
+                  </button>
+                </span>
+              );
+            })}
+          </div>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <select
+              value={newRoman}
+              onChange={(e) => setNewRoman(e.target.value)}
+              className="border border-slate-300 rounded-lg px-2 py-1"
+            >
+              <option value="I">I</option>
+              <option value="II">II</option>
+            </select>
+            <input
+              value={newYear}
+              onChange={(e) => setNewYear(e.target.value.replace(/\D/g, "").slice(0, 4))}
+              className="w-20 border border-slate-300 rounded-lg px-2 py-1"
+              placeholder="2025"
+            />
+            <button
+              onClick={addSession}
+              className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-semibold"
+            >
+              Tambah sesi
+            </button>
+            {/^\d{4}$/.test(newYear) && (
+              <span className="text-slate-500">
+                → {newRoman} : {newYear}/{Number(newYear) + 1}
+              </span>
+            )}
+          </div>
+          <div className="text-[11px] text-slate-500">
+            Senarai disusun ikut tahun. Sesi terdahulu/hadapan laporan CQI diambil
+            daripada senarai ini, jadi intake yang melompat satu semester tetap betul.
+          </div>
+          {sessionValid ? (
             <span className="text-emerald-700">
-              Terdahulu: <strong>{prevSessionOf(session.trim()) || "-"}</strong> • Hadapan:{" "}
-              <strong>{nextSessionOf(session.trim()) || "-"}</strong>
+              Sesi semasa: <strong>{session.trim()}</strong> • Terdahulu:{" "}
+              <strong>{preview.prev || "-"}</strong> • Hadapan:{" "}
+              <strong>{preview.next || "-"}</strong>
             </span>
           ) : (
-            <span className="text-rose-700">Format perlu seperti <strong>II : 2025/2026</strong>.</span>
+            <span className="text-rose-700">
+              Pilih sesi semasa daripada senarai (format <strong>II : 2025/2026</strong>).
+            </span>
           )}
-        </label>
+        </div>
         <label className="block space-y-1">
           <span className="font-semibold">GEMINI_API_KEY (Pilihan untuk Ringkasan AI)</span>
           <input

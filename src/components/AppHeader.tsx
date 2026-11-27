@@ -3,13 +3,14 @@ import { Building2, Printer, Save } from "lucide-react";
 
 type AppHeaderProps = {
   courseCode?: string;
+  session?: string;
   apiOnline: boolean;
   onSave: () => void;
   onPrintCo: () => void;
   onPrintJsu: () => void;
 };
 
-export default function AppHeader({ courseCode, apiOnline, onSave, onPrintCo, onPrintJsu }: AppHeaderProps) {
+export default function AppHeader({ courseCode, session, apiOnline, onSave, onPrintCo, onPrintJsu }: AppHeaderProps) {
   return (
     <header className="no-print sticky top-0 z-30 h-14 bg-slate-900 text-white px-5 flex items-center justify-between border-b border-slate-800 shadow">
       <div className="flex items-center gap-3">
@@ -30,6 +31,9 @@ export default function AppHeader({ courseCode, apiOnline, onSave, onPrintCo, on
       <div className="flex items-center gap-2">
         <span className="px-2.5 py-1 rounded-md bg-amber-400 text-slate-950 font-bold text-xs">
           {courseCode || "TIADA KURSUS"}
+        </span>
+        <span className="px-2 py-1 rounded-md bg-slate-800 border border-slate-700 text-sky-300 text-[11px] font-semibold">
+          Sesi: {session || "-"}
         </span>
         <span
           className={`px-2 py-1 rounded-md text-[11px] font-semibold ${

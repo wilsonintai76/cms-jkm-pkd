@@ -139,6 +139,41 @@ export function nextSessionOf(session: string): string {
   return s.roman === "II" ? `I : ${s.end}/${s.end + 1}` : `II : ${s.start}/${s.end}`;
 }
 
+/** Senarai sesi sah, tanpa pendua, disusun ikut tahun kemudian semester. */
+export function sortSessions(list: string[] | null | undefined): string[] {
+  const seen = new Set<string>();
+  const rows: { label: string; start: number; roman: string }[] = [];
+  for (const raw of list || []) {
+    const s = splitSession(raw);
+    if (!s) continue;
+    const label = `${s.roman} : ${s.start}/${s.end}`;
+    if (seen.has(label)) continue;
+    seen.add(label);
+    rows.push({ label, start: s.start, roman: s.roman });
+  }
+  return rows
+    .sort((a, b) => a.start - b.start || (a.roman === b.roman ? 0 : a.roman === "I" ? -1 : 1))
+    .map((r) => r.label);
+}
+
+/**
+ * Sesi terdahulu/hadapan mengikut senarai sebenar — intake boleh melompat
+ * sesuatu semester. Sesi di luar senarai jatuh balik kepada kiraan aritmetik.
+ */
+export function sessionNeighbours(
+  list: string[] | null | undefined,
+  session: string,
+): { prev: string; next: string } {
+  const value = (session || "").trim();
+  const ordered = sortSessions(list);
+  const idx = ordered.indexOf(value);
+  if (idx < 0) return { prev: prevSessionOf(value), next: nextSessionOf(value) };
+  return {
+    prev: ordered[idx - 1] || prevSessionOf(value),
+    next: ordered[idx + 1] || nextSessionOf(value),
+  };
+}
+
 export function defaultProgCqi(session = ""): ProgCqi {
   return {
     seksyenOverride: "",
@@ -229,15 +264,23 @@ export function metaFromCourse(
  * tetapan yang dipakai sebelum ini, supaya perubahan tetapan mengemas kini sesi
  * yang dahulunya diisi oleh tetapan (bukan sesi yang datang dari dokumen).
  */
-export function withSession(meta: CqiMeta, session: string, previous = ""): CqiMeta {
+export function withSession(
+  meta: CqiMeta,
+  session: string,
+  previous = "",
+  sessions: string[] = [],
+): CqiMeta {
   const value = (session || "").trim();
   if (!value || !SESSION_RE.test(value)) return meta;
   const current = meta.currSession.trim();
   if (current && current !== previous.trim()) return meta;
-  const prev = prevSessionOf(value) || meta.prevSession;
-  const next = nextSessionOf(value) || meta.nextSession;
-  if (current === value && meta.prevSession === prev && meta.nextSession === next) return meta;
-  return { ...meta, currSession: value, prevSession: prev, nextSession: next };
+  const { prev, next } = sessionNeighbours(sessions, value);
+  const prevValue = prev || meta.prevSession;
+  const nextValue = next || meta.nextSession;
+  if (current === value && meta.prevSession === prevValue && meta.nextSession === nextValue) {
+    return meta;
+  }
+  return { ...meta, currSession: value, prevSession: prevValue, nextSession: nextValue };
 }
 
 export function programmesOf(students: CqiStudent[]): string[] {  return Array.from(new Set(students.map((s) => s.prog).filter(Boolean))).sort();

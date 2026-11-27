@@ -13,7 +13,15 @@ import CourseOutlineModule from "./components/CourseOutlineModule";
 import JsuModule from "./components/JsuModule";
 import CqiModule from "./components/CqiModule";
 import SettingsPanel from "./components/SettingsPanel";
-import { bundleFromExtract, createEmptyCqi, metaFromCourse, withSession } from "./lib/cqi";
+import {
+  bundleFromExtract,
+  createEmptyCqi,
+  metaFromCourse,
+  nextSessionOf,
+  prevSessionOf,
+  sortSessions,
+  withSession,
+} from "./lib/cqi";
 import type { CqiBundle } from "./lib/cqi";
 
 const INITIAL_DRAFT = {
@@ -43,6 +51,7 @@ export default function App() {
   const [logoUri, setLogoUri] = useState<string | null>(null);
   const [geminiKey, setGeminiKey] = useState("");
   const [currentSession, setCurrentSession] = useState("");
+  const [sessions, setSessions] = useState<string[]>([]);
   const [institution, setInstitution] = useState("");
   const [department, setDepartment] = useState("");
   const [busy, setBusy] = useState(false);
@@ -81,6 +90,20 @@ export default function App() {
           const s = await setRes.json();
           if (s.gemini_api_key && !cancelled) setGeminiKey(s.gemini_api_key);
           if (s.current_session && !cancelled) setCurrentSession(s.current_session);
+          if (!cancelled) {
+            let stored: string[] = [];
+            try {
+              const parsed = s.sessions ? JSON.parse(s.sessions) : [];
+              if (Array.isArray(parsed)) stored = parsed;
+            } catch {
+              /* nilai lama bukan JSON */
+            }
+            if (!stored.length && s.current_session) {
+              const seed = String(s.current_session).trim();
+              stored = [seed, prevSessionOf(seed), nextSessionOf(seed)];
+            }
+            setSessions(sortSessions(stored));
+          }
           if (s.institution && !cancelled) setInstitution(s.institution);
           if (s.department && !cancelled) setDepartment(s.department);
         }
@@ -149,13 +172,19 @@ export default function App() {
     }
   };
 
+  const applyLoadedCourse = (loaded: Course) => {
+    const next = applyAutoWeeks(loaded);
+    if (!next.session && currentSession.trim()) next.session = currentSession.trim();
+    setCourse(next);
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!apiOnline) {
       if (file.name.toLowerCase().endsWith(".json")) {
         const txt = await file.text();
-        setCourse(applyAutoWeeks(JSON.parse(txt)));
+        applyLoadedCourse(JSON.parse(txt));
         notify(`Fail JSON '${file.name}' dimuatkan!`, "success");
       } else {
         notify("Pelayan backend tidak aktif — PDF tidak dapat diekstrak.", "warning");
@@ -169,7 +198,7 @@ export default function App() {
       const res = await fetch(`${API_BASE}/upload-syllabus`, { method: "POST", body: fd });
       if (!res.ok) throw new Error(await res.text());
       const parsed = await res.json();
-      setCourse(applyAutoWeeks(parsed));
+      applyLoadedCourse(parsed);
       const listRes = await fetch(`${API_BASE}/courses`);
       if (listRes.ok) setSavedList(await listRes.json());
       notify(`Silibus '${file.name}' (${parsed.course_code}) berjaya diekstrak & disimpan!`, "success");
@@ -186,7 +215,7 @@ export default function App() {
       const res = await fetch(`${API_BASE}/courses/${encodeURIComponent(code)}`);
       if (res.ok) {
         const loaded = await res.json();
-        setCourse(applyAutoWeeks(loaded));
+        applyLoadedCourse(loaded);
         notify(`Rekod '${code}' dimuatkan.`, "success");
       }
     } catch (err: any) {
@@ -245,7 +274,7 @@ export default function App() {
       const parsed = await res.json();
       const next = bundleFromExtract(parsed);
       next.meta = metaFromCourse(course, next.meta);
-      next.meta = withSession(next.meta, currentSession);
+      next.meta = withSession(next.meta, courseSession, "", sessions);
       // Jabatan berwibawa datang daripada Tetapan (dokumen CORR mungkin guna ejaan lain).
       if (department.trim()) next.meta = { ...next.meta, jabatan: department.trim() };
       setCqi(next);
@@ -288,17 +317,19 @@ export default function App() {
     });
   }, [course]);
 
-  // Sesi akademik global (menu 6) mengisi sesi laporan CQI yang masih kosong.
+  // Sesi kursus (jika ada) mengatasi sesi semasa Tetapan. Sesi terdahulu/hadapan
+  // diambil daripada senarai sesi induk supaya intake yang melompat semester betul.
+  const courseSession = (course.session || currentSession || "").trim();
   const appliedSession = useRef("");
   useEffect(() => {
-    if (!currentSession.trim()) return;
+    if (!courseSession) return;
     const previous = appliedSession.current;
     setCqi((prev) => {
-      const meta = withSession(prev.meta, currentSession, previous);
+      const meta = withSession(prev.meta, courseSession, previous, sessions);
       return meta === prev.meta ? prev : { ...prev, meta };
     });
-    appliedSession.current = currentSession.trim();
-  }, [currentSession]);
+    appliedSession.current = courseSession;
+  }, [courseSession, sessions]);
 
   // Rekod lama yang belum ada tetapan identiti: isi medan Tetapan sekali (pengguna
   // hanya perlu klik "Simpan Tetapan" untuk mengekalkannya).
@@ -483,6 +514,7 @@ export default function App() {
 
       <AppHeader
         courseCode={course.course_code}
+        session={courseSession}
         apiOnline={apiOnline}
         onSave={() => saveToSQLite(false)}
         onPrintCo={() => triggerPrint("co")}
@@ -518,7 +550,12 @@ export default function App() {
                 onDelete={deleteSavedCourse}
                 onRetryApi={retryApi}
               />
-              <CourseInfoPanel course={course} checklist={checklist} onChange={setCourse} />
+              <CourseInfoPanel
+                course={course}
+                checklist={checklist}
+                sessions={sessions}
+                onChange={setCourse}
+              />
             </div>
           )}
 
@@ -588,6 +625,8 @@ export default function App() {
               onGeminiKeyChange={setGeminiKey}
               session={currentSession}
               onSessionChange={setCurrentSession}
+              sessions={sessions}
+              onSessionsChange={setSessions}
               institution={institution}
               department={department}
               onInstitutionChange={setInstitution}

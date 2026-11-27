@@ -126,10 +126,14 @@ setiap baris CLO, pada **Template CORR** (jadual petunjuk prestasi + kad KPI) da
 pada **Borang CQI** (jadual Pencapaian sesi terdahulu dan sesi semasa), supaya
 laporan CQI merujuk CLO kursus yang sama.
 
-**Sesi akademik** (sesi semasa, terdahulu dan hadapan) ditetapkan sekali di menu
-**5. Tetapan & Logo** → *Sesi Akademik Semasa* (format `II : 2025/2026`). Laporan CQI
-menggunakannya secara automatik; sesi yang dibaca daripada dokumen CORR/PBCLOGSA
-masih diutamakan untuk laporan tersebut.
+**Sesi akademik** ditetapkan sekali di menu **5. Tetapan & Logo** → *Sesi Akademik*:
+senarai sesi induk (cth. `I : 2025/2026`, `II : 2025/2026`, `I : 2026/2027`) dengan satu
+ditanda sebagai *sesi semasa*. Setiap kursus kemudian memilih **Sesi Ditawarkan**
+sendiri dalam *1. Maklumat Kursus*, jadi beberapa kursus boleh berada dalam sesi
+berbeza. Sesi **terdahulu dan hadapan** diambil daripada senarai itu, bukan dikira
+aritmetik — intake yang melompat satu semester (cth. `I : 2025/2026` → `I : 2026/2027`)
+tetap memberi terdahulu yang betul. Jika sesi tiada dalam senarai, aplikasi jatuh
+balik kepada kiraan aritmetik seperti sebelum ini.
 
 **Identiti dokumen** (institusi dan jabatan) juga ditetapkan sekali di menu
 **5. Tetapan & Logo** → *2. Identiti Dokumen*. Semua rekod kursus menggunakan nilai

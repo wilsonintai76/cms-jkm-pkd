@@ -27,6 +27,7 @@ export function createEmptyCourse(): Course {
     course_code: "",
     synopsis: "",
     semester_offered: "1",
+    session: "",
     credit_value: 3,
     study_weeks: 14,
     week_auto: true,

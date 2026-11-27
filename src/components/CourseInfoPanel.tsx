@@ -8,10 +8,11 @@ const INPUT = "w-full border border-slate-300 rounded-lg px-3 py-2";
 type CourseInfoPanelProps = {
   course: Course;
   checklist: [string, boolean][];
+  sessions?: string[];
   onChange: (next: Course) => void;
 };
 
-export default function CourseInfoPanel({ course, checklist, onChange }: CourseInfoPanelProps) {
+export default function CourseInfoPanel({ course, checklist, sessions = [], onChange }: CourseInfoPanelProps) {
   const setField = (key: string, value: unknown) => onChange({ ...course, [key]: value });
 
   const updateClo = (idx: number, patch: Record<string, unknown>) => {
@@ -101,6 +102,24 @@ export default function CourseInfoPanel({ course, checklist, onChange }: CourseI
               className={INPUT}
               placeholder="Semester 1/ Year 1"
             />
+          </label>
+          <label className="space-y-1">
+            <span className="font-semibold text-slate-600">Sesi Ditawarkan</span>
+            <select
+              value={course.session || ""}
+              onChange={(e) => setField("session", e.target.value)}
+              className={INPUT}
+            >
+              <option value="">— tiada —</option>
+              {sessions.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+              {course.session && !sessions.includes(course.session) && (
+                <option value={course.session}>{course.session}</option>
+              )}
+            </select>
           </label>
           <label className="space-y-1">
             <span className="font-semibold text-slate-600">Nilai Kredit</span>
