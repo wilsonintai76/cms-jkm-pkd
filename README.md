@@ -99,12 +99,29 @@ Rekod disimpan dalam jadual `cqi_reports` (satu rekod per kod kursus) dan boleh
 dibuka semula dari senarai **Rekod CQI Tersimpan**. Endpoint:
 `GET/POST /api/cqi`, `GET/DELETE /api/cqi/{kod}`, `POST /api/cqi/extract`.
 
+## Semak SLT (Course Outline → tab 3)
+
+Tab **3. Semak SLT** memaparkan semula jadual SLT rasmi daripada data kursus supaya
+boleh dibanding terus dengan silibus:
+
+| Jadual | Kandungan |
+| --- | --- |
+| Taburan SLT mengikut topik | jam kuliah (L) dan kendiri (IL) setiap topik + jumlah |
+| Penilaian | setiap CA (peratus, masa penilaian, pembelajaran kendiri, SLT), penilaian akhir dan grand total |
+| Jam kontak | jumlah L + masa penilaian CA, dibahagi minggu pengajian (boleh diubah, lalai 14) |
+
+Empat semakan dipaparkan hijau/amber: jumlah SLT = kredit × 40, SLT topik + CA + FE
+= jumlah SLT, peratus CA + FE = 100%, dan setiap topik mempunyai jam kuliah. Jam
+kendiri yang tidak sama dengan jam kuliah ditanda amber kerana silibus biasanya
+menetapkan kedua-duanya sama. Nilai SLT disunting di tab 1.
+
 ## Bundle layout
 
 | Path | Purpose |
 | --- | --- |
 | `backend_api.py` | FastAPI + SQLite backend (also used directly in development) |
 | `src/` | React UI |
+| `src/lib/calc.ts` | SLT totals, JSU computation, `computeSltReview` |
 | `src-tauri/src/lib.rs` | Starts/stops the backend sidecar with the window |
 | `src-tauri/binaries/` | PyInstaller output (generated, git-ignored) |
 | `scripts/dev.ps1` | Dev run with the MSVC environment loaded |
