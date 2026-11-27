@@ -5,6 +5,9 @@
 # user only needs to double-click one file — nothing is installed, no registry
 # entries, no admin rights, no Python.
 #
+# Re-running this keeps the existing data\ and logo\ folders, so records survive
+# an update. Close the app first — Windows locks the exe files while it runs.
+#
 # Usage: powershell -ExecutionPolicy Bypass -File .\scripts\package-portable.ps1
 
 $ErrorActionPreference = "Stop"
@@ -18,9 +21,14 @@ try {
     if (-not (Test-Path $appExe)) { throw "Missing $appExe. Run scripts\build.ps1 first." }
     if (-not (Test-Path $sidecarExe)) { throw "Missing $sidecarExe. Run scripts\build.ps1 first." }
 
+    $pkgVersion = (Get-Content "package.json" -Raw | ConvertFrom-Json).version
+
     # Keep this outside dist/: Vite empties dist/ on every build.
     $out = Join-Path $projectRoot "release\co-jsu-desktop-portable"
-    if (Test-Path $out) { Remove-Item -Recurse -Force $out }
+    if (Test-Path $out) {
+        # Keep user data across updates: only replace the app files.
+        Get-ChildItem $out -File | Remove-Item -Force
+    }
     New-Item -ItemType Directory -Force -Path $out | Out-Null
 
     Copy-Item $appExe $out
@@ -40,7 +48,7 @@ start "" "co-jsu-desktop.exe"
     Set-Content -Path (Join-Path $out "Mula co-jsu-desktop.bat") -Value $launcher -Encoding ASCII
 
     $readme = @"
-co-jsu-desktop (versi mudah alih / portable)
+co-jsu-desktop (versi mudah alih / portable) — v$pkgVersion
 ===========================================
 
 CARA GUNA
@@ -78,6 +86,9 @@ HOW TO RUN (English)
   or read-only, %LOCALAPPDATA%\co-jsu-desktop\ is used instead.
 "@
     Set-Content -Path (Join-Path $out "BACA SAYA.txt") -Value $readme -Encoding UTF8
+
+    $stamp = "co-jsu-desktop versi $pkgVersion`r`nDibina: $(Get-Date -Format 'yyyy-MM-dd HH:mm')`r`n"
+    Set-Content -Path (Join-Path $out "VERSI.txt") -Value $stamp -Encoding UTF8
 
     Write-Host ""
     Write-Host "=== Portable folder ===" -ForegroundColor Green
