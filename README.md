@@ -114,10 +114,12 @@ Aliran kerja: **1** muat naik → **2** semak Template CORR setiap program
 (2 muka surat, pilihan muka surat 3 = lampiran markah) → **Cetak / PDF**.
 
 **Maklumat Kepala Laporan** (kod kursus, nama kursus, jabatan, nama penyelaras dan
-tanda CLO4) diisi automatik daripada kursus Course Outline/JSU yang sedang dibuka,
-jadi laporan CQI menyambung data kursus yang sama. Nilai yang sudah diisi tidak
-ditimpa semasa anda menyunting kursus; butang **Dari Kursus** mengisi semula semua
-medan itu bila perlu. Nama pemegang tempat seperti "PENSYARAH" diabaikan.
+sesi akademik) **hanya dipaparkan** dalam tab muat naik — tiada medan untuk ditaip
+kerana semuanya datang daripada **2. Maklumat Kursus** dan **6. Tetapan** (jabatan
+daripada *Identiti Dokumen*). Laporan CQI dengan itu sentiasa menyambung data kursus
+yang sama. Nama pemegang tempat seperti "PENSYARAH" diabaikan. Pilihan **Cetak lajur
+CLO4** dinyalakan automatik apabila kursus mempunyai 4 CLO atau laporan PBCLOGSA
+mengandungi markah CLO4.
 
 **Sesi akademik** (sesi semasa, terdahulu dan hadapan) ditetapkan sekali di menu
 **6. Tetapan & Logo** → *Sesi Akademik Semasa* (format `II : 2025/2026`). Laporan CQI

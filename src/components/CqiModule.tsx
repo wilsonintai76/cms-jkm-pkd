@@ -19,7 +19,6 @@ type CqiModuleProps = {
   onProgrammeChange: (p: string) => void;
   onChange: (next: CqiBundle) => void;
   onUpload: (files: File[]) => void;
-  onFillFromCourse: () => void;
   onSave: () => void;
   onPrint: () => void;
   onNotify: (msg: string, type?: string) => void;
@@ -46,7 +45,6 @@ export default function CqiModule({
   onProgrammeChange,
   onChange,
   onUpload,
-  onFillFromCourse,
   onSave,
   onPrint,
   onNotify,
@@ -225,7 +223,6 @@ export default function CqiModule({
           courseLoaded={courseLoaded}
           onChange={onChange}
           onUpload={onUpload}
-          onFillFromCourse={onFillFromCourse}
           onSelectProgramme={(p) => {
             onProgrammeChange(p);
             onSubViewChange("corr");

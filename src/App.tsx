@@ -337,15 +337,6 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [institution, department, course]);
 
-  const fillCqiFromCourse = () => {
-    if (!course.course_code && !course.course_name) {
-      notify("Tiada kursus CO/JSU dimuatkan. Buka rekod kursus di menu 1 dahulu.", "warning");
-      return;
-    }
-    setCqi((prev) => ({ ...prev, meta: metaFromCourse(course, prev.meta, true) }));
-    notify("Kepala laporan CQI diisi daripada kursus CO/JSU.", "success");
-  };
-
   const deleteSavedCqi = async (code: string) => {
     await fetch(`${API_BASE}/cqi/${encodeURIComponent(code)}`, { method: "DELETE" });
     setCqiList((prev) => prev.filter((x) => x.course_code !== code));
@@ -577,7 +568,6 @@ export default function App() {
               onProgrammeChange={setCqiProg}
               onChange={setCqi}
               onUpload={handleCqiUpload}
-              onFillFromCourse={fillCqiFromCourse}
               onSave={() => saveCqi(cqi)}
               onPrint={() => triggerPrint("cqi")}
               onNotify={notify}

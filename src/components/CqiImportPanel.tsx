@@ -14,15 +14,11 @@ type CqiImportPanelProps = {
   courseLoaded: boolean;
   onChange: (next: CqiBundle) => void;
   onUpload: (files: File[]) => void;
-  onFillFromCourse: () => void;
   onSelectProgramme: (prog: string) => void;
   onOpenBorang: (prog: string) => void;
   onOpenSaved: (code: string) => void;
   onDeleteSaved: (code: string) => void;
 };
-
-const FIELD =
-  "w-full border border-slate-300 rounded-lg px-2 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-sky-200";
 
 export default function CqiImportPanel({
   bundle,
@@ -32,7 +28,6 @@ export default function CqiImportPanel({
   onChange,
   onUpload,
   courseLoaded,
-  onFillFromCourse,
   onSelectProgramme,
   onOpenBorang,
   onOpenSaved,
@@ -141,70 +136,53 @@ export default function CqiImportPanel({
           )}
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-2.5">
-          <div className="flex items-start justify-between gap-2">
+        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-2.5 text-xs">
+          <div>
             <h2 className="text-base font-bold">Maklumat Kepala Laporan</h2>
-            <button
-              onClick={onFillFromCourse}
-              disabled={!courseLoaded}
-              title="Ambil kod, nama, jabatan, penyelaras dan CLO4 daripada kursus CO/JSU yang dibuka"
-              className="px-2 py-1 rounded-lg border border-slate-300 text-[11px] font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-1 disabled:opacity-40 shrink-0"
-            >
-              <RefreshCw className="w-3 h-3" /> Dari Kursus
-            </button>
+            <p className="text-[11px] text-slate-500">
+              Diambil automatik daripada <strong>2. Maklumat Kursus</strong> dan{" "}
+              <strong>6. Tetapan</strong> — tiada medan untuk diisi di sini.
+            </p>
           </div>
-          <p className="text-[11px] text-slate-500 -mt-1">
-            {courseLoaded
-              ? "Diisi automatik daripada kursus CO/JSU yang dibuka — boleh ubah."
-              : "Buka rekod kursus di menu 1 untuk mengisi bahagian ini secara automatik."}
-          </p>
-          <label className="block">
-            <span className="text-[11px] font-semibold text-slate-600">Kod Kursus</span>
-            <input className={FIELD} value={meta.code} onChange={(e) => patchMeta({ code: e.target.value })} />
-          </label>
-          <label className="block">
-            <span className="text-[11px] font-semibold text-slate-600">Nama Kursus</span>
-            <input className={FIELD} value={meta.name} onChange={(e) => patchMeta({ name: e.target.value })} />
-          </label>
-          <label className="block">
-            <span className="text-[11px] font-semibold text-slate-600">Jabatan</span>
-            <input className={FIELD} value={meta.jabatan} onChange={(e) => patchMeta({ jabatan: e.target.value })} />
-          </label>
-          <label className="block">
-            <span className="text-[11px] font-semibold text-slate-600">Nama Penyelaras Kursus</span>
-            <input
-              className={FIELD}
-              value={meta.coordinator}
-              onChange={(e) => patchMeta({ coordinator: e.target.value })}
-            />
-          </label>
-          <div className="grid grid-cols-1 gap-2 pt-1">
-            <div className="rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-2 space-y-0.5">
-              <div className="text-[11px] font-semibold text-slate-600">Sesi Akademik</div>
-              {meta.currSession ? (
-                <div className="text-xs">
-                  <span className="font-bold text-slate-900">{meta.currSession}</span>
-                  <div className="text-[11px] text-slate-500">
-                    Terdahulu {meta.prevSession || "-"} • Hadapan {meta.nextSession || "-"}
-                  </div>
-                </div>
-              ) : (
-                <div className="text-[11px] text-amber-700">Belum ditetapkan — isi di menu 6. Tetapan.</div>
-              )}
-              <div className="text-[10px] text-slate-400">
-                Diambil daripada tetapan aplikasi atau dokumen CORR/PBCLOGSA.
+          <div className="divide-y divide-slate-100 rounded-lg border border-slate-200">
+            {[
+              ["Kod Kursus", meta.code],
+              ["Nama Kursus", meta.name],
+              ["Jabatan", meta.jabatan],
+              ["Nama Penyelaras", meta.coordinator],
+              ["Sesi Akademik", meta.currSession],
+            ].map(([label, value]) => (
+              <div key={label} className="flex items-start justify-between gap-2 px-2.5 py-1.5">
+                <span className="text-[11px] font-semibold text-slate-500 shrink-0">{label}</span>
+                <span
+                  className={`text-right font-semibold ${
+                    value ? "text-slate-900" : "text-amber-700"
+                  }`}
+                >
+                  {value || "belum ada"}
+                </span>
               </div>
-            </div>
-            <label className="flex items-center gap-2 text-xs font-semibold text-slate-700 pt-1">
-              <input
-                type="checkbox"
-                checked={meta.hasClo4}
-                onChange={(e) => patchMeta({ hasClo4: e.target.checked })}
-                className="rounded border-slate-300"
-              />
-              Kursus ini mempunyai CLO4
-            </label>
+            ))}
           </div>
+          {meta.currSession && (
+            <div className="text-[11px] text-slate-500">
+              Terdahulu {meta.prevSession || "-"} • Hadapan {meta.nextSession || "-"}
+            </div>
+          )}
+          {!courseLoaded && (
+            <div className="text-[11px] text-amber-700">
+              Buka rekod kursus di menu 1 supaya bahagian ini terisi.
+            </div>
+          )}
+          <label className="flex items-center gap-2 text-[11px] font-semibold text-slate-700">
+            <input
+              type="checkbox"
+              checked={meta.hasClo4}
+              onChange={(e) => patchMeta({ hasClo4: e.target.checked })}
+              className="rounded border-slate-300"
+            />
+            Cetak lajur CLO4
+          </label>
         </div>
       </div>
 
